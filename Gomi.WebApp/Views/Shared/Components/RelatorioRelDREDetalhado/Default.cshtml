@@ -1,0 +1,76 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelDREDetalhado>
+
+<h2 style="font-family:Assistant; position:inherit;text-align:center;">Demonstrativo de Resultado Financeiro Detalhado - Ano</h2>
+
+<div class="options">
+    <div class="option">
+        @(Html.DevExtreme().CheckBox()
+            .ID("autoExpand2")
+            .Text("Detalhar")
+            .Value(true)
+            .OnValueChanged(@<text>
+            function(data) {
+            var dataGrid = $("#DREDetalhado").dxDataGrid("instance");
+            dataGrid.option("grouping.autoExpandAll", data.value);
+            }
+            </text>)
+        )
+    </div>
+</div>
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .ID("DREDetalhado")
+                    .Columns(c =>
+                    {
+
+                        c.Add().DataField("Grupo").Width(200).GroupIndex(1).Caption("");
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Jan").Format("0#");
+                        c.Add().DataField("Fev").Format("0#");
+                        c.Add().DataField("Mar").Format("0#");
+                        c.Add().DataField("Abr").Format("0#");
+                        c.Add().DataField("Mai").Format("0#");
+                        c.Add().DataField("Jun").Format("0#");
+                        c.Add().DataField("Jul").Format("0#");
+                        c.Add().DataField("Ago").Format("0#");
+                        c.Add().DataField("Set").Format("0#");
+                        c.Add().DataField("Oct").Format("0#").Caption("Out");
+                        c.Add().DataField("Nov").Format("0#");
+                        c.Add().DataField("Dez").Format("0#");
+                        c.Add().DataField("Media").Format("0#");
+                        c.Add().DataField("Total").Format("0#");
+
+                    })
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s => s.Mode(GridScrollingMode.Standard))
+                    .Paging(p => p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("DREDetalhado Ano").AllowExportSelectedData(true))
+                    .Height(400)
+                    .Summary(
+                     s => s.GroupItems(g => {
+                         g.Add().Column("Jan").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Fev").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Mar").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Abr").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Mai").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Jun").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Jul").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Ago").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Set").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Oct").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Nov").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Dez").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Media").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Total").SummaryType(SummaryType.Sum).ValueFormat("0#").ShowInGroupFooter(false).AlignByColumn(true);
+
+
+                     }
+                                      )
+                         .Texts(t => t.Sum(" {0} ")))
+                    .ShowColumnLines(false)
+
+
+)
+
+

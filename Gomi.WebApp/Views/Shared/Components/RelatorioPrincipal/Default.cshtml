@@ -1,0 +1,504 @@
+﻿<div class="row">
+    <div class="col-lg-12 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+                <div class="card">
+                    <div class="col-lg-12">
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant; color:black;">Data Inicial:</span>
+                                        @(Html.DevExtreme().DateBox().ID("Rel_DataInicial").Type(DateBoxType.Date).Value(DateTime.Now).Width(200).Height(33))
+                                    </div>
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant; color:black;">Data Final:</span>
+                                        @(Html.DevExtreme().DateBox().ID("Rel_DataFinal").Type(DateBoxType.Date).Value(DateTime.Now).Width(200).Height(33))
+                                    </div>
+                                    <div class="col-1 ">
+                                        <span style="font-family:Assistant; color:black;">Filtrar:</span>
+                                        @(Html.DevExtreme().Button().ID("Rel_DataOk").Text("OK").Type(ButtonType.Normal).Height(33))
+                                    </div>
+                                    <div class="col-3 ">
+                                        <span style="font-family:Assistant; color:black;">Selecione uma Conta:</span>
+                                        @(Html.DevExtreme().SelectBox()
+                                  .ID("Rel_ListaContas")
+                                  .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterListaContas"))
+                                  .ValueExpr("Id")
+                                  .DisplayExpr("Nome")
+                                  .SearchEnabled(true)
+                                  .SearchMode(DropDownSearchMode.Contains)
+                                  .Width(300)
+                                  .Height(33)
+
+                                        )
+                                    </div>
+
+                                    <div class="col-4 ">
+                                        <span style="font-family:Assistant; color:black;">Incluir Lançamentos:</span>
+                                        <div class="row">
+                                            <div class="col-6 ">
+                                                @(Html.DevExtreme().CheckBox().Value(true).Width(120).Text("Pagos"))
+                                            </div>
+
+                                            <div class="col-6 ">
+                                                @(Html.DevExtreme().CheckBox().Value(true).Width(120).Text("Não Pagos") )
+                                            </div>
+
+                                        </div>
+                                    </div>
+
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant; color:black;">Tipo de Pessoa:</span>
+                                        @(Html.DevExtreme().SelectBox()
+                                  .ValueExpr("Id")
+                                  .DisplayExpr("Nome")
+                                  .SearchEnabled(true)
+                                  .SearchMode(DropDownSearchMode.Contains)
+                                  .Width(200)
+                                  .Height(33) )
+                                    </div>
+
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant; color:black;">Pessoa:</span>
+                                        @(Html.DevExtreme().SelectBox()
+                                  .ValueExpr("Id")
+                                  .DisplayExpr("Nome")
+                                  .SearchEnabled(true)
+                                  .SearchMode(DropDownSearchMode.Contains)
+                                  .Width(200)
+                                  .Height(33) )
+                                    </div>
+
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant;color:black;">Categoria:</span>
+                                        @(Html.DevExtreme().SelectBox()
+                                  .ValueExpr("Id")
+                                  .DisplayExpr("Nome")
+                                  .SearchEnabled(true)
+                                  .SearchMode(DropDownSearchMode.Contains)
+                                  .Width(200)
+                                  .Height(33) )
+                                    </div>
+
+                                    <div class="col-2 ">
+                                        <span style="font-family:Assistant; color:black;">Centro de Custos:</span>
+                                        @(Html.DevExtreme().SelectBox()
+                                                  .ValueExpr("Id")
+                                                  .DisplayExpr("Nome")
+                                                  .SearchEnabled(true)
+                                                  .SearchMode(DropDownSearchMode.Contains)
+                                                  .Width(200)
+                                                  .Height(33) )
+                                    </div>
+
+                                    <div class="col-4 ">
+                                        <span style="font-family:Assistant; color:black;">Mostrar por Data de:</span>
+                                        @{
+                                            var priorities = new[] { "Emissão", "Competência", "Vencimento" };
+                                        }
+                                        @(Html.DevExtreme().RadioGroup().Items(priorities).Value("Competência").Layout(Orientation.Horizontal))
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-2 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+
+                <span style="color:black;font-family:Assistant; font-weight:bold; ">Relatórios</span>
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Dem. de Resultados Det.").Width(300).OnClick("ExibirRelDREDetalhado"))
+                        </div>
+
+                        <div>
+                            @(Html.DevExtreme().Button().Text("DRE Acumulado").OnClick("ExibirRelDRE").Width(300))
+                        </div>
+
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Fluxo de Caixa Det. por Conta").Width(300).OnClick("ExibirRelFluxoDeCaixa"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Fluxo de Caixa Det. Realizado").Width(300).OnClick("ExibirFluxoDeCaixaGeralRealizado"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Fluxo de Caixa Det. Previsto").Width(300).OnClick("ExibirFluxoDeCaixaGeralPrevisto"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Resumo Geral").OnClick("ExibirResumoGeral").Width(300))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Pagamentos por Lançamento").Width(300).OnClick("ExibirRelRelacaoPagamentos"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Recebimentos por Lançamento").Width(300).OnClick("ExibirRelRelacaoRecebimentos"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Pagamentos por Categoria").Width(300).OnClick("ExibirRelPagamentosPorCategoria"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Recebimentos por Categoria").Width(300).OnClick("ExibirRelRecebimentosPorCategoria"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Pagamentos por Tipo de Pessoa").Width(300).OnClick("ExibirRelPagamentosPorTipoPessoa"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Recebimentos por Tipo de Pessoa").Width(300).OnClick("ExibirRelRecebimentosPorTipoPessoa"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Pagamentos por Dia").Width(300).OnClick("ExibirRelPagamentosPorDia"))
+                        </div>
+                        <div>
+                            @(Html.DevExtreme().Button().Text("Recebimentos por Dia").Width(300).OnClick("ExibirRelRecebimentosPorDia"))
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-10 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+                <div class="row">
+
+                    <div   style="font-family:Assistant; color:black;" id="DataInicial"></div>
+                    <div   style="font-family:Assistant; color:black;" id="DataFinal"></div>
+
+                    <div id="RelRecebimentoPorDia" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-recebimentos-por-dia max-priority="3" is-done="false">
+                        </vc:relatorio-rel-recebimentos-por-dia>
+                    </div>
+                    <div id="RelPagamentosPorDia" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-pagamentos-por-dia max-priority="3" is-done="false">
+                        </vc:relatorio-rel-pagamentos-por-dia>
+                    </div>
+                    <div id="RelRecebimentosPorTipoPessoa" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-recebimentos-por-tipo-pessoa max-priority="3" is-done="false">
+                        </vc:relatorio-rel-recebimentos-por-tipo-pessoa>
+                    </div>
+                    <div id="RelPagamentosPorTipoPessoa" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-pagamentos-por-tipo-pessoa max-priority="3" is-done="false">
+                        </vc:relatorio-rel-pagamentos-por-tipo-pessoa>
+                    </div>
+                    <div id="RelRecebimentosPorCategoria" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-recebimentos-por-categoria max-priority="3" is-done="false">
+                        </vc:relatorio-rel-recebimentos-por-categoria>
+                    </div>
+                    <div id="RelPagamentosPorCategoria" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-pagamentos-por-categoria max-priority="3" is-done="false">
+                        </vc:relatorio-rel-pagamentos-por-categoria>
+                    </div>
+                    <div id="RelRelacaoRecebimentos" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-relacao-recebimentos max-priority="3" is-done="false">
+                        </vc:relatorio-rel-relacao-recebimentos>
+                    </div>
+                    <div id="RelRelacaoPagamentos" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-relacao-pagamentos max-priority="3" is-done="false">
+                        </vc:relatorio-rel-relacao-pagamentos>
+                    </div>
+                    <div id="RelFluxoDeCaixa" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-fluxo-de-caixa max-priority="3" is-done="false">
+                        </vc:relatorio-rel-fluxo-de-caixa>
+                    </div>
+                    <div id="RelDRE" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-dre max-priority="3" is-done="false">
+                        </vc:relatorio-rel-dre>
+                    </div>
+                    <div id="RelDREDetalhado" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-dre-detalhado max-priority="3" is-done="false">
+                        </vc:relatorio-rel-dre-detalhado>
+                    </div>
+                    <div id="RelFluxoDeCaixaGeralRealizado" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-fluxo-de-caixa-geral-realizado max-priority="3" is-done="false">
+                        </vc:relatorio-rel-fluxo-de-caixa-geral-realizado>
+                    </div>
+                    <div id="RelFluxoDeCaixaGeralPrevisto" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-fluxo-de-caixa-geral-previsto max-priority="3" is-done="false">
+                        </vc:relatorio-rel-fluxo-de-caixa-geral-previsto>
+                    </div>
+                    <div id="RelResumoGeral" class="col-lg-12" style="display:none;">
+                        <vc:relatorio-rel-resumo-geral max-priority="3" is-done="false">
+                        </vc:relatorio-rel-resumo-geral>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function ExibirRelRecebimentosPorDia() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "block";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelPagamentosPorDia() {
+        document.getElementById("RelPagamentosPorDia").style.display = "block";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelRecebimentosPorTipoPessoa() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "block";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelPagamentosPorTipoPessoa() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "block";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelRecebimentosPorCategoria() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "block";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelPagamentosPorCategoria() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "block";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelRelacaoRecebimentos() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "block";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelRelacaoPagamentos() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "block";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelFluxoDeCaixa() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "block";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelDRE() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "block";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+        MostrarPeriodo();
+    }
+
+    function ExibirRelDREDetalhado() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "block";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+    }
+
+    function ExibirFluxoDeCaixaGeralRealizado() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "block";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "none";
+    }
+
+    function ExibirFluxoDeCaixaGeralPrevisto() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "block";
+        document.getElementById("RelResumoGeral").style.display = "none";
+    }
+
+    function ExibirResumoGeral() {
+        document.getElementById("RelPagamentosPorDia").style.display = "none";
+        document.getElementById("RelRecebimentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentoPorDia").style.display = "none";
+        document.getElementById("RelPagamentosPorTipoPessoa").style.display = "none";
+        document.getElementById("RelRecebimentosPorCategoria").style.display = "none";
+        document.getElementById("RelPagamentosPorCategoria").style.display = "none";
+        document.getElementById("RelRelacaoRecebimentos").style.display = "none";
+        document.getElementById("RelRelacaoPagamentos").style.display = "none";
+        document.getElementById("RelFluxoDeCaixa").style.display = "none";
+        document.getElementById("RelDRE").style.display = "none";
+        document.getElementById("RelDREDetalhado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralRealizado").style.display = "none";
+        document.getElementById("RelFluxoDeCaixaGeralPrevisto").style.display = "none";
+        document.getElementById("RelResumoGeral").style.display = "block";
+    }
+</script>
+
+
+<script>
+    function MostrarPeriodo() {
+        var dataInicial = $("#Rel_DataInicial").dxDateBox("instance").option("value");
+        var dataFinal = $("#Rel_DataFinal").dxDateBox("instance").option("value");
+        
+        document.getElementById("DataInicial").innerHTML = "Período de " + dataInicial;
+        document.getElementById("DataFinal").innerHTML = "a " + dataFinal;
+
+    }
+</script>

@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelPagamentosPorDia>
+
+<h2 style="font-family:Assistant;position:inherit;text-align:center">Pagamentos por Dia</h2>
+
+
+<div>
+    @(Html.DevExtreme().DataGrid().DataSource(Model)
+                        .ID("RelPagamentosPorDia")
+                        .Columns(c =>
+                        {
+                            c.Add().DataField("Competencia");
+                            c.Add().DataField("Diasemana").Caption("Dia da Semana");
+                            c.Add().DataField("Valor").Format("0#.##").Caption("Valor Diário");
+                            c.Add().DataField("Percentual").Format("0#.###00").Caption("%");
+                            c.Add().DataField("Valoracumulado").Format("0#.##").Caption("Valor Acumulado");
+                            c.Add().DataField("Percentualacumulado").Format("0#.###00").Caption("% Acumulado");
+
+                        })
+                        .Summary(s => s.TotalItems(t =>
+                        {
+                            t.Add().Column("Percentual").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                            t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+
+
+                        }).Texts(t => t.Sum("")))
+                        .Sorting(s => s.Mode(GridSortingMode.None))
+                        .ShowRowLines(true)
+                        .Export(e => e.Enabled(true).FileName("Recebimento por Dia").AllowExportSelectedData(true))
+                        .Height(400)
+                        .ShowColumnLines(false)
+    )
+
+</div>

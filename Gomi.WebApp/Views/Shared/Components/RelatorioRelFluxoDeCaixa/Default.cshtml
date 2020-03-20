@@ -1,0 +1,60 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelFluxoDeCaixa>
+
+<h2 style="font-family:Assistant;position:inherit;text-align:center;">Fluxo De Caixa Detalhado</h2>
+
+
+<div class="options">
+    <div class="option">
+        @(Html.DevExtreme().CheckBox()
+            .Text("Expandir")
+            .Value(true)
+            .OnValueChanged(@<text>
+            function(data) {
+            var dataGrid = $("#RelFluxoDeCaixa").dxDataGrid("instance");
+            dataGrid.option("grouping.autoExpandAll", data.value);
+            }
+            </text>)
+        )
+    </div>
+</div>
+
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .ID("RelFluxoDeCaixa")
+                    .Columns(c =>
+                    {
+
+                        c.Add().DataField("Conta").GroupIndex(1);
+                        c.Add().DataField("Competencia").Caption("Data").Width(85);
+                        c.Add().DataField("Nomepessoa").Caption("Nome");
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Descricao").Width(185);
+                        c.Add().DataField("Recebimentos").Format("0#.##00");
+                        c.Add().DataField("Pagamentos").Format("0#.##00");
+                        c.Add().DataField("Diferencaacumuladadia").Format("0#.##00").Caption("Saldo");
+                    })
+
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s=> s.Mode(GridScrollingMode.Standard))
+                    .Paging(p=> p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("Fluxo de Caixa Detalhado").AllowExportSelectedData(true))
+                    .Height(400)
+                    .Summary(
+                     s=> s.GroupItems(g => {
+                         g.Add().Column("Recebimentos").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Pagamentos").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true);
+                     })
+                         .Texts(t=> t.Sum("{0} "))
+                         .TotalItems(t=> {
+                             t.Add().Column("Recebimentos").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                             t.Add().Column("Pagamentos").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+
+
+
+                         })
+                         )
+                    .ShowColumnLines(false)
+)
+
+

@@ -1,0 +1,51 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelDRE>
+
+<h2 style="font-family:Assistant; position:inherit;text-align:center;">Demonstrativo de Resultado Financeiro</h2>
+
+<div class="options">
+    <div class="option">
+        @(Html.DevExtreme().CheckBox()
+            .ID("autoExpand")
+            .Text("Detalhar")
+            .Value(true)
+            .OnValueChanged(@<text>
+            function(data) {
+            var dataGrid = $("#DRE").dxDataGrid("instance");
+            dataGrid.option("grouping.autoExpandAll", data.value);
+            }
+            </text>)
+        )
+    </div>
+</div>
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .ID("DRE")
+                    .Columns(c =>
+                    {
+
+                        c.Add().DataField("Descricao").Width(85).GroupIndex(1).Caption("");
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Valor").Format("0#.##00").Caption("Valores");
+                        c.Add().DataField("Percentual").Format("0#.##00").Caption("%");
+
+                    })
+
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s => s.Mode(GridScrollingMode.Standard))
+                    .Paging(p => p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("DRE").AllowExportSelectedData(true))
+                    .Height(400)
+                    .Summary(
+                     s => s.GroupItems(g => {
+                         g.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true);
+                         g.Add().Column("Percentual").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true);
+                     }
+                                      )
+                         .Texts(t => t.Sum(" {0} ")))
+                    .ShowColumnLines(false)
+
+
+)
+
+

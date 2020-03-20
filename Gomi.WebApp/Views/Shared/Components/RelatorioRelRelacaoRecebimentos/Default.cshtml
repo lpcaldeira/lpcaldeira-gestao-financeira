@@ -1,0 +1,30 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelRelacaoRecebimentos>
+
+<h2 style="font-family:Assistant; position:inherit;text-align:center;">Relação de Recebimentos</h2>
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .Columns(c =>
+                    {
+                       
+                        c.Add().DataField("Data").Width(85).GroupIndex(1);
+                        c.Add().DataField("Nome");
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Descricao");
+                        c.Add().DataField("Valor").Format("0#.##00").Caption("Recebimentos");
+                    })
+                    
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s=> s.Mode(GridScrollingMode.Standard))
+                    .Paging(p=> p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("RelacaoRecebimentos").AllowExportSelectedData(true))
+                    .Height(400)
+                    .Summary(
+                     s=> s.GroupItems(g=> 
+                                      g.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true))
+                         .Texts(t=> t.Sum("Total: {0} "))
+                         .TotalItems(t=> t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00")))
+                    .ShowColumnLines(false)
+)
+
+

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelResumoGeral>
+
+<h2 style="font-family:Assistant; position:inherit;text-align:center;">Resumo das Informações Financeiras</h2>
+
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .Columns(c =>
+                    {
+
+                        
+                        c.Add().DataField("Descricao").Caption("").Width("150");
+                        c.Add().DataField("Jan").Format("0#");
+                        c.Add().DataField("Fev").Format("0#");
+                        c.Add().DataField("Mar").Format("0#");
+                        c.Add().DataField("Abr").Format("0#");
+                        c.Add().DataField("Mai").Format("0#");
+                        c.Add().DataField("Jun").Format("0#");
+                        c.Add().DataField("Jul").Format("0#");
+                        c.Add().DataField("Ago").Format("0#");
+                        c.Add().DataField("Set").Format("0#");
+                        c.Add().DataField("Oct").Format("0#").Caption("Out");
+                        c.Add().DataField("Nov").Format("0#");
+                        c.Add().DataField("Dez").Format("0#");
+                        c.Add().DataField("Media").Format("0#");
+                        c.Add().DataField("Total").Format("0#");
+
+                    })
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s => s.Mode(GridScrollingMode.Standard))
+                    .Paging(p => p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("Resumo das Informações Financeiras").AllowExportSelectedData(true))
+                    .Height(400)
+                    
+                    .ShowColumnLines(false)
+
+
+)
+
+

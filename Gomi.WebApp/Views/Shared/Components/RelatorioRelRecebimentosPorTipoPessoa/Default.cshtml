@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelRecebimentosPorTipoPessoa>
+
+<h2 style="font-family:Assistant;position:inherit;text-align:center;">Recebimentos por Tipo de Pessoa</h2>
+
+<div class="row">
+    <div class="col-12 ">
+        @(Html.DevExtreme().CheckBox()
+            .Text("Expandir")
+            .Value(true)
+            .OnValueChanged(@<text>
+            function(data) {
+            var dataGrid = $("#RelRecebimentosPorTipoPessoa").dxDataGrid("instance");
+            dataGrid.option("grouping.autoExpandAll", data.value);
+            }
+            </text>))
+        </div>
+    </div>
+
+
+
+
+        @(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .ID("RelRecebimentosPorTipoPessoa")
+                    .Columns(c =>
+                    {
+                        c.Add().DataField("Transacionador").GroupIndex(1).AutoExpandGroup(true);
+                        c.Add().DataField("Datarecebimento").Caption("Data").Width(85);
+                        c.Add().DataField("Nome");
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Descricao");
+                        c.Add().DataField("Valor").Format("0#.##00").Caption("Recebimentos");
+                    })
+                    .Summary(s => s.TotalItems(t =>
+                    {
+                        t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                    }).Texts(t => t.Sum("Total: {0}"))
+                    .GroupItems(g =>
+                                      g.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00").ShowInGroupFooter(false).AlignByColumn(true)))
+
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s => s.Mode(GridScrollingMode.Standard))
+                    .Paging(p => p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("Recebimento por Tipo de Pessoa").AllowExportSelectedData(true))
+                   // .Height(400)
+                    .ShowColumnLines(false)
+        )
+
+

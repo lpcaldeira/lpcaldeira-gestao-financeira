@@ -1,0 +1,27 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.RelPagamentosPorCategoria>
+
+<h2 style="font-family:Assistant;position:inherit;text-align:center;">Pagamentos por Categoria</h2>
+
+@(Html.DevExtreme().DataGrid().DataSource(Model)
+                    .Columns(c =>
+                    {
+                        c.Add().DataField("Categoria");
+                        c.Add().DataField("Valor").Format("0#.##00").Caption("Valor");
+                        c.Add().DataField("Percentual").Format("0#.##00");
+                    })
+                    .Summary(s => s.TotalItems(t =>
+                    {
+                        t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                        t.Add().Column("Percentual").SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                    }).Texts(t => t.Sum("")))
+
+                    .Sorting(s => s.Mode(GridSortingMode.None))
+                    .Scrolling(s=> s.Mode(GridScrollingMode.Standard))
+                    .Paging(p=> p.Enabled(false))
+                    .ShowRowLines(true)
+                    .Export(e => e.Enabled(true).FileName("Pagamento por Categoria").AllowExportSelectedData(true))
+                    .Height(400)
+                    .ShowColumnLines(false)
+)
+
+
