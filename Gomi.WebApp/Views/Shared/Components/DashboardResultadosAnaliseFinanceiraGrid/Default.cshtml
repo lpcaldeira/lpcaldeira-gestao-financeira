@@ -1,0 +1,20 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.AnaliseFinanceira>
+ 
+@(Html.DevExtreme().DataGrid()
+
+
+    .DataSource(Model)
+    
+    .Columns(c =>
+    {
+        c.Add().DataField("Mes").Width(120).Format(Format.MonthAndYear); ;
+        c.Add().DataField("Margemcontribuicao").Caption("Margem Contribuição").Width(100).Format(Format.Currency);
+        c.Add().DataField("Resultadooperacional").Caption("Resultado Operacional").Width(100).Format(Format.Currency);
+        c.Add().DataField("Resultadofinanceiro").Caption("Resultado Financeiro").Width(100).Format(Format.Currency);
+    })
+
+)
+
+

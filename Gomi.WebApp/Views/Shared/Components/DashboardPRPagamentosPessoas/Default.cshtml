@@ -1,0 +1,35 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.PagamentosPessoa>
+
+<h6> Em aberto</h6>
+
+@(Html.DevExtreme().DataGrid()
+
+    .DataSource(Model)
+    .ColumnAutoWidth(true)
+    .Height("100%")
+    .ShowBorders(false)
+    .ShowColumnLines(false)
+    .ShowRowLines(true)
+  //  .RowAlternationEnabled(true)
+    .Paging(p => p.Enabled(false))
+    //.FilterRow(f => f.Visible(true))
+    .HeaderFilter(h => h.Visible(true))
+    .Columns(c =>
+    {
+        c.Add().DataField("Pessoa");
+        c.Add().DataField("Valor").AllowFiltering(false).Format(Format.Currency);
+    })
+
+    )
+    
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var fontSize = 8;
+
+        $('.dx-datagrid').css({'font-size': fontSize + 'px'});
+    });
+</script>   

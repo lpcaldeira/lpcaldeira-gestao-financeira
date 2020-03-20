@@ -1,0 +1,437 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Pagar
+
+<script type="text/javascript">
+
+    function excluirPagamentoClick() {
+        var idPagamento = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Id));
+        var result = DevExpress.ui.dialog.confirm("Deseja excluir o registro?", "Atenção");
+        result.done(function (confirmou) {
+            if (confirmou) {
+                $.ajax({
+                    url: '/Movimentacoes/ExcluirPagamento?id=' + parseInt(idPagamento),
+                    type: 'POST',
+                    processData: false,
+                    success: function (data) {
+                        $('#addPagamento').modal('hide');
+                        $("#contaspagas").dxDataGrid("instance").refresh();
+                        $("#contasapagar").dxDataGrid("instance").refresh();
+                    }
+                });
+            }
+        });
+    }
+
+    function salvarPessoaCadastroRapidoPagar() {
+        var nomePessoa = $("#clientePagarNome").dxTextBox('instance').option('value');
+        var tipoTransacionador = $("#pagamentoTransacionadores").dxSelectBox('instance').option('value');
+        $.ajax({
+            url: '/CadastrosConfiguracoes/SalvarPessoaCadastroRapido?nome=' + nomePessoa + '&transacionador=' + tipoTransacionador,
+            type: 'POST',
+            processData: false,
+            success: function (data) {
+                $("#pagamentoNomePessoa").dxSelectBox('instance').option('value', data.nome);
+                fecharCadastroRapidoPagar();
+            }
+        });
+    }
+
+    function adicionarPessoaCadastroRapido(args) {
+        $("#cadastroRapidoPagar").css('display', 'block');
+        $("#pagamentoNomePessoa").dxSelectBox('instance')._popup.option('visible', false);
+        var e = args.jQueryEvent;
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function fecharCadastroRapidoPagar() {
+        $('#cadastroRapidoPagar').css('display', 'none');
+    }
+
+</script>
+
+<form asp-controller="Movimentacoes" asp-action="SalvarPagamento" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridPagamentos">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idPagamento" })
+    @Html.HiddenFor(model => model.IdPessoa, new { @id = "idPessoaPagamento" })
+    @Html.HiddenFor(model => model.IdCentroCusto, new { @id = "idCentroCustoPagamento" })
+    @Html.HiddenFor(model => model.IdPlanoConta, new { @id = "idPlanoContaPagamento" })
+    @Html.HiddenFor(model => model.IdContaPagamento, new { @id = "idContaPagamentoPagamento" })
+    @Html.HiddenFor(model => model.IdEmpresa, new { @id = "idEmpresaPagamento" })
+    @Html.HiddenFor(model => model.IdCaixa, new { @id = "idCaixaPagamento" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorPagamento" })
+    @Html.HiddenFor(model => model.RegistroNovo, new { @id = "registroNovoPagamento" })
+    @Html.HiddenFor(model => model.RegistroAPagar, new { @id = "registroAPagarPagamento" })
+
+    <div id="addPagamento" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloPagamento"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("pagarValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Emissão</span>
+                                        @(Html.DevExtreme()
+                                              .DateBoxFor(x => x.Emissao)
+                                              .ID("pagamentoEmissao")
+                                              .ElementAttr("style", "width: 100%;")
+                                              .InputAttr("id", "pagamentoEmissaoInput"))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Vencimento</span>
+                                        @(Html.DevExtreme()
+                                              .DateBoxFor(x => x.Vencimento)
+                                              .DisplayFormat("dd/MM/yyyy")
+                                              .ID("pagamentoVencimento")
+                                              .ElementAttr("style", "width: 100%;")
+                                              .InputAttr("id", "pagamentoVencimentoInput"))
+                                    </div>
+                                    <div class="col-md-5 m-b-20">
+                                        <span>Pessoa</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.NomePessoa)
+                                              .ID("pagamentoNomePessoa")
+                                              .InputAttr("id", "pagamentoNomePessoaInput")
+                                              .DataSource(d => d.Mvc()
+                                                  .Controller("Movimentacoes")
+                                                  .LoadAction("GetPessoasPagamento")
+                                                  .Key("Nome"))
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Nome")
+                                              .FieldTemplate(@<text>
+                                                  <div class="containerSelect">
+                                                      @(Html.DevExtreme()
+                                                            .TextBox()
+                                                            .Value(new JS("obj && Nome")))
+                                                      <div class="containerAddCadastroRapido">
+                                                          @(Html.DevExtreme()
+                                                                .Button()
+                                                                .ID("pagamentoButtonAddPessoa")
+                                                                .OnClick("adicionarPessoaCadastroRapido")
+                                                                .Icon("add")
+                                                                .Text(""))
+                                                      </div>
+                                                  </div>
+                                              </text>)
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .ItemTemplate(@<text><div><%= Nome %> - <%= Transacionador %></div></text>)
+                                              .OnSelectionChanged("selecionarPagamentoPessoaChanged"))
+                                        
+                                        <div id="cadastroRapidoPagar" class="cadastroRapido hide">
+                                            <a class="cancelar" href="#" onclick="fecharCadastroRapidoPagar()">
+                                                <i class="dx-icon-close"></i>
+                                            </a>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    @(Html.DevExtreme()
+                                                          .TextBox()
+                                                          .ID("clientePagarNome")
+                                                          .Placeholder("Nome")
+                                                          .InputAttr("id", "clientePagarNomeInput")
+                                                          .Mode(TextBoxMode.Text))
+                                                </div>
+                                                <div class="col-md-5">
+                                                    @(Html.DevExtreme().SelectBox()
+                                                          .ID("pagamentoTransacionadores")
+                                                          .InputAttr("id", "pagamentoTransacionadoresInput")
+                                                          .DataSource(Model.TiposTransacionadores)
+                                                          .SearchEnabled(true)
+                                                          .SearchMode(DropDownSearchMode.StartsWith))
+                                                </div>
+                                                <div class="col-md-2">
+                                                    @(Html.DevExtreme()
+                                                          .Button()
+                                                          .ID("pagamentoButtonCriarPessoa")
+                                                          .OnClick("salvarPessoaCadastroRapidoPagar")
+                                                          .ElementAttr(new
+                                                          {
+                                                              @class = "btn btn-info text-uppercase waves-effect waves-light",
+                                                          })
+                                                          .Text("Criar"))
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Valor</span>
+                                        @(Html.DevExtreme()
+                                              .NumberBoxFor(x => x.Valor)
+                                              .Format("#,##0.00")
+                                              .ID("pagamentoValor")
+                                              .InputAttr(new
+                                              {
+                                                  @id = "pagamentoValorInput",
+                                                  @onClick = "this.select();"
+                                              }))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Categoria</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.DescricaoPlanoConta)
+                                              .ID("pagamentoPlanoConta")
+                                              .InputAttr("id", "pagamentoPlanoContaInput")
+                                              .DataSource(Model.PlanosContas)
+                                              .DisplayExpr("Categoria")
+                                              .ValueExpr("Categoria")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarPagamentoPlanoContaChanged"))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Descrição</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Descricao)
+                                              .ID("pagamentoDescricao")
+                                              .InputAttr("id", "pagamentoDescricaoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Centro Custo</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.DescricaoCentroCusto)
+                                              .ID("pagamentoCentroCusto")
+                                              .InputAttr("id", "pagamentoCentroCustoInput")
+                                              .DataSource(Model.CentrosCustos)
+                                              .DisplayExpr("Descricao")
+                                              .ValueExpr("Descricao")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarPagamentoCentroCustoChanged"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("pagamentoButtonCobrar")
+                          .ValidationGroup("pagarValidationGroup")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Salvar e pagar")
+                          .OnClick("salvarPagamentoECobrarClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("pagamentoButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("pagarValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("pagamentoButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarPagamentoClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("pagamentoButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirPagamentoClick"))
+                </div>
+
+                @(Html.DevExtreme().TabPanel()
+                              .ID("tabpanelPagarPagamento")
+                              .ElementAttr("style", "padding: 5px;")
+                              .Items(i =>
+                              {
+                                  i.Add().TabTemplate(@<text><b><%= "Realizar Pagamento" %></b></text>)
+                                         .Template(@<text>
+                                             <br />
+                                             @using (Html.DevExtreme().ValidationGroup())
+                                             {
+                                                 <div class="row" style="padding-left: 10px;">
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Conta Pagamento</span>
+                                                         @(Html.DevExtreme().SelectBoxFor(x => x.NomeContaPagamento)
+                                                                       .ID("pagamentoContaPagamento")
+                                                                       .InputAttr("id", "pagamentoContaPagamentoInput")
+                                                                       .DataSource(d => d.Mvc().Controller("Movimentacoes").LoadAction("GetContas").Key("Nome"))
+                                                                       .DisplayExpr("Nome")
+                                                                       .ValueExpr("Nome")
+                                                                       .SearchEnabled(true)
+                                                                       .SearchMode(DropDownSearchMode.StartsWith)
+                                                                       .OnSelectionChanged("selecionarContaPagamentoChanged"))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Data de Pagamento</span>
+                                                         @(Html.DevExtreme()
+                                                                       .DateBoxFor(x => x.DataPagamento)
+                                                                       .DisplayFormat("dd/MM/yyyy")
+                                                                       .ID("pagamentoDataPagamento")
+                                                                       .InputAttr("id", "pagamentoDataPagamentoInput"))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Valor Pago</span>
+                                                         @(Html.DevExtreme()
+                                                                       .NumberBoxFor(x => x.ValorPago)
+                                                                       .Format("#,##0.00")
+                                                                       .ID("pagamentoValorPago")
+                                                                       .InputAttr(new
+                                                                       {
+                                                                           @id = "pagamentoValorPagoInput",
+                                                                           @onClick = "this.select();"
+                                                                       }))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         @(Html.DevExtreme()
+                                                                       .Button()
+                                                                       .ID("pagamentoButtonPagar")
+                                                                       .UseSubmitBehavior(true)
+                                                                       .Option("style", "")
+                                                                       .ElementAttr(new
+                                                                       {
+                                                                           @class = "btn btn-info text-uppercase waves-effect waves-light",
+                                                                           @style = "margin-top: 20px;"
+                                                                       })
+                                                                       .Text("Pagar"))
+                                                     </div>
+                                                 </div>
+                                             }
+                                         </text>);
+                              }))
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    var onSuccess = function (viewComponent) {
+        $('#addPagamento').modal('hide');
+        $("#contaspagas").dxDataGrid("instance").refresh();
+        $("#contasapagar").dxDataGrid("instance").refresh();
+    };
+
+    function selecionarPagamentoPessoaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idPessoaPagamento').val(valor);
+            }
+
+            if (key === 'IdTransacionador') {
+                $('#idTransacionadorPagamento').val(valor);
+            }
+        });
+    }
+
+    function selecionarPagamentoContaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaPagamento').val(valor);
+            }
+        });
+    }
+
+    function selecionarContaPagamentoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaPagamentoPagamento').val(valor);
+            }
+        });
+    }
+
+    function selecionarPagamentoPlanoContaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idPlanoContaPagamento').val(valor);
+            }
+        });
+    }
+
+    function selecionarPagamentoCentroCustoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idCentroCustoPagamento').val(valor);
+            }
+        });
+    }
+
+    function setarValoresDeCobrancaPagamento() {
+        $("#pagamentoDataPagamento").dxDateBox("instance").option("value", new Date());
+        var valorAPagar = parseFloat($("#pagamentoValorInput").val().replace('.', ''));
+        $("#pagamentoValorPago").dxNumberBox("instance").option("value", valorAPagar);
+    }
+
+    function salvarPagamentoECobrarClick(params) {
+        var validou = params.validationGroup.validate();
+        if (validou.isValid) {
+            $("#tabpanelPagarPagamento").dxTabPanel("instance").option("visible", true);
+            setarValoresDeCobrancaPagamento();
+        }
+    }
+
+    function inicializarCamposPagamento(registroEmManutencao) {
+
+        var registroAPagar = $("#registroAPagarPagamento").val() === "True";
+
+        $("#pagamentoEmissao").dxDateBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoVencimento").dxDateBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoNomePessoa").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoValor").dxNumberBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoValor").dxNumberBox("instance").option("rtlEnabled", true);
+        $("#pagamentoPlanoConta").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoDescricao").dxTextBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoCentroCusto").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#pagamentoButtonCobrar").dxButton("instance").option("visible", registroEmManutencao && registroAPagar);
+        $("#pagamentoButtonSalvar").dxButton("instance").option("visible", registroEmManutencao);
+        $("#pagamentoButtonEditar").dxButton("instance").option("visible", !registroEmManutencao);
+        $("#pagamentoButtonExcluir").dxButton("instance").option("visible", !registroEmManutencao);
+        $("#tabpanelPagarPagamento").dxTabPanel("instance").option("visible", !registroEmManutencao || !registroAPagar);
+
+        var habilitarCamposPagamento = false;
+        if (registroAPagar || registroEmManutencao)
+            habilitarCamposPagamento = true;
+
+        $("#pagamentoContaPagamento").dxSelectBox("instance").option("disabled", !habilitarCamposPagamento);
+        $("#pagamentoDataPagamento").dxDateBox("instance").option("disabled", !habilitarCamposPagamento);
+        $("#pagamentoValorPago").dxNumberBox("instance").option("disabled", !habilitarCamposPagamento);
+        $("#pagamentoValorPago").dxNumberBox("instance").option("rtlEnabled", true);
+        $("#pagamentoButtonPagar").dxButton("instance").option("disabled", !habilitarCamposPagamento);
+        $("#pagamentoButtonPagar").dxButton("instance").option("text", registroAPagar ? "Pagar" : "Atualizar");
+
+        if (!registroEmManutencao && registroAPagar)
+            setarValoresDeCobrancaPagamento();
+    }
+
+    function editarPagamentoClick() {
+        inicializarCamposPagamento(true);
+    }
+
+    $(document).ready(function () {
+        $("#pagamentoEmissaoInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#pagamentoEmissao").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });  
+        $("#pagamentoEmissaoInput").focus(function () {
+            $("#pagamentoEmissaoInput").setCursorPosition(0);
+        });
+        $("#pagamentoVencimentoInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#pagamentoVencimento").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });
+        $("#pagamentoVencimentoInput").focus(function () {
+            $("#pagamentoVencimentoInput").setCursorPosition(0);
+        });
+
+        var registroNovo = $("#registroNovoPagamento").val() === "True";
+        inicializarCamposPagamento(registroNovo);
+    });
+
+</script>

@@ -1,0 +1,221 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ContaExtrato>
+<script>
+    function insertMovimentacaoButtonClick_extrato(tipoMovimento) {
+        $.ajax({
+            url: '/Movimentacoes/Inserir' + tipoMovimento,
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#ficha" + tipoMovimento).html(viewComponent);
+                $("#add" + tipoMovimento).modal('show');
+            }
+        });
+    }
+
+    function insertTransferenciaButtonClick_extrato() {
+        $.ajax({
+            url: '/Movimentacoes/InserirTransferencia',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaTransferencia").html(viewComponent);
+                $('#add-transferencia').modal('show');
+            }
+        });
+    }
+</script>
+
+<h4 class="card-title" style="font-family:Assistant;">Movimentação Detalhada</h4>
+<div class="form-horizontal form-material">
+    <div class="form-group">
+        <div class="row">
+
+            <div class="col-12 ">
+                @(Html.DevExtreme().Button().OnClick(@<text>function (b) {
+                insertMovimentacaoButtonClick_extrato("Recebimento");
+                }</text>).Text("Novo Recebimento").ElementAttr("class", "btn btn-success").Icon("add"))
+
+
+                @(Html.DevExtreme().Button().OnClick(@<text>function (b) {
+                insertMovimentacaoButtonClick_extrato("Pagamento");
+                }</text>).Text("Novo Pagamento").ElementAttr("class", "btn btn-success").Icon("add"))
+
+                @(Html.DevExtreme().Button().OnClick(@<text>function (b) {
+                insertTransferenciaButtonClick_extrato();
+                }</text>).Text("Nova Transferencia").ElementAttr("class", "btn btn-info").Icon("add"))
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="form-horizontal form-material">
+    <div class="form-group">
+        <div class="row">
+            <div class="col-3 ">
+
+                @(Html.DevExtreme().SelectBox()
+                                  .ID("listagemdecontas")
+                                  .InputAttr("Id", "ListagemDeContasImput")
+                                  .ValueExpr("Id")
+                                  .DisplayExpr("Nome")
+                                  .SearchEnabled(true)
+                                  .SearchMode(DropDownSearchMode.Contains)
+                                  .Width(300)
+                                  .Height(33)
+                                  .OnSelectionChanged("SelecionarContaSaldo")
+                                  .OnValueChanged("FiltrarPeriodo")
+                )
+
+                <script>
+
+                    $(document).ready(function () {
+                        $.ajax({
+                            url: '/Dashboard/ObterListaContas/options=' + null,
+                            type: 'GET',
+                            processData: false,
+                            success: function (resultado) {
+                                var selectBoxContas = $("#listagemdecontas").dxSelectBox("instance");
+                                selectBoxContas.option("dataSource", resultado);
+                                selectBoxContas.option("value", resultado[0].Id);
+                            }
+                        });
+                    });
+
+/*                    function FiltrarConta(data) {
+
+                        var dataGrid = $("#gridextrato").dxDataGrid("instance");
+                        dataGrid.clearFilter();
+                        dataGrid.filter(["Idconta", "=", data.value]);
+                    }
+                    */
+                    function SelecionarContaSaldo(data) {
+                        Object.keys(data.selectedItem).forEach(function (key) {
+                            var valor = data.selectedItem[key];
+                            if (key === 'Saldo') {
+                                document.getElementById("SaldoConta").innerHTML = "Saldo Atual: R$ " + valor;
+                            }
+
+                        });
+
+
+                    }
+                </script>
+
+
+
+            </div>
+
+            <div class="col-6 ">
+                <div id="SaldoConta" style="color:black; font-size:20px; height:33px; width:unset; font-weight:bold; text-align:center; font-family:Assistant; "> </div>
+
+            </div>
+
+            <div class="col-1 ">
+                @(Html.DevExtreme().DateBox()
+                    .ID("dateBoxInicial")
+                    .InputAttr("id", "dateBoxInicialInput")
+                    .Type(DateBoxType.Date)
+                    .Value(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1))
+                    .Width(100)
+                    .Height(33))   
+            </div>
+
+            <div class="col-1 ">
+                @(Html.DevExtreme().DateBox()
+                    .ID("dateBoxFinal")
+                    .InputAttr("id", "dateBoxFinalInput")
+                    .Type(DateBoxType.Date)
+                    .Value(DateTime.Now)
+                    .Width(100)
+                    .Height(33)) 
+            </div>
+
+            <div class="col-1 ">
+                @(Html.DevExtreme().Button()
+                    .ID("idok")
+                    .Text("OK")
+                    .Type(ButtonType.Normal)
+                    .OnClick(@<text>function () { FiltrarPeriodo (); }</text>).Height(33))
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script type="text/javascript">                
+    
+                    function FiltrarPeriodo() {
+
+                        var dataInicial = $("#dateBoxInicial").dxDateBox("instance").option("value");
+                        var dataFinal = $("#dateBoxFinal").dxDateBox("instance").option("value");
+                        var conta = $("#listagemdecontas").dxSelectBox("instance").option("value");
+                            
+                        var gridextrato = $("#gridextrato").dxDataGrid("instance");
+                        gridextrato.filter([
+                            ["Dia", ">=", dataInicial],
+                            ["Dia", "<=", dataFinal],
+                            ["Idconta","=",conta]
+                        ]);
+                    };
+
+                    $(document).ready(function () {
+                        $("#dateBoxInicialInput").inputmask({
+                            alias: "date",
+                            "onincomplete": function () { $("#dateBoxInicial").dxDateBox("instance").option("value", new Date()); },
+                            placeholder: "_"
+                        });  
+                        $("#dateBoxInicialInput").focus(function () {
+                            $("#dateBoxInicialInput").setCursorPosition(0);
+                        });
+                        $("#dateBoxFinalInput").inputmask({
+                            alias: "date",
+                            "onincomplete": function () { $("#dateBoxFinal").dxDateBox("instance").option("value", new Date()); },
+                            placeholder: "_"
+                        });
+                        $("#dateBoxFinalInput").focus(function () {
+                            $("#dateBoxFinalInput").setCursorPosition(0);
+                        });
+                    });
+
+        
+</script>
+
+<div style="background-color:darkturquoise; font-weight:bold; color:white; margin-top:5px; text-align:center; ">EXTRATO DE MOVIMENTAÇÕES</div>
+
+@(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ContaExtrato>()
+          .ID("gridextrato")
+          .DataSource(Model)
+          .TwoWayBindingEnabled(true)
+          .ShowColumnLines(false)
+          .ShowRowLines(true)
+          .ShowBorders(true)
+          .RowAlternationEnabled(true)
+          .Sorting(s => s.Mode(GridSortingMode.None))
+          .NoDataText("Nenhum registro encontrado.")
+          .Pager(p => p.Visible(false))
+          .Scrolling(s => s.Mode(GridScrollingMode.Standard))
+          .Columns(columns =>
+          {
+              columns.Add().DataField("Idconta").Visible(false).Width(50);
+              columns.Add().DataField("Conta").Visible(false).Width(50);
+              columns.Add().DataField("Dia").Caption("Data").DataType(GridColumnDataType.Date).Width(100);
+              columns.Add().DataField("Pessoa").Caption("Nome").Width(190);
+              columns.Add().DataField("Categoria").Width(190);
+              columns.Add().DataField("Descricao").Caption("Descrição").Width(330);
+              columns.Add().DataField("Recebimentos").Width(130).Format("#.##");
+              columns.Add().DataField("Pagamentos").Width(130).Format("#.##").CssClass("customClass");
+              columns.Add().DataField("Diferencaacumuladadia").Format("#.##").Caption("Saldo").Width(146);
+
+          })
+          .Summary(s => s.Texts(t => t.Sum("Total: {0}")).TotalItems(i =>
+          {
+              i.Add().Column("Recebimentos").SummaryType(SummaryType.Sum).ValueFormat(Format.Currency);
+              i.Add().Column("Pagamentos").SummaryType(SummaryType.Sum).ValueFormat(Format.Currency);
+          }
+                        ))
+          .Width(1222)
+          .Height(300)
+
+
+)
+

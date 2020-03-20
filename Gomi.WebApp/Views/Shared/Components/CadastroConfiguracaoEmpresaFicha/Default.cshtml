@@ -1,0 +1,145 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Empresa
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarEmpresa" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridEmpresas">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idEmpresa" })
+
+    <div id="add-empresa" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloEmpresa"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <from class="form-horizontal form-material">
+                        <div class="form-group">
+                            <div class="col-md-12 m-b-20">
+                                <span>Nome</span>
+                                @(Html.DevExtreme()
+                                      .TextBoxFor(x => x.Razao)
+                                      .ID("empresaRazaoSocial")
+                                      .InputAttr("id", "empresaRazaoSocialInput")
+                                      .Mode(TextBoxMode.Text))
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 m-b-20">
+                                    <span>CNPJ</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Cnpj)
+                                          .ID("empresaCnpj")
+                                          .InputAttr("id", "empresaCnpjInput")
+                                          .Mask("00.000.000/0000-00")
+                                          .Mode(TextBoxMode.Text))
+
+                                </div>
+                                <div class="col-md-4 m-b-20">
+                                    <span>Telefone</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Telefone)
+                                          .ID("empresaTelefone")
+                                          .InputAttr("id", "empresaTelefoneInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12 m-b-20">
+                                    <span>Email</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Email)
+                                          .ID("empresaEmail")
+                                          .InputAttr("id", "empresaEmailInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                            </div>
+                            <h3>Endereço</h3>
+                            <div class="row">
+                                <div class="col-md-2 m-b-20">
+                                    <span>CEP</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Cep)
+                                          .ID("empresaCep")
+                                          .Mask("00000-000")
+                                          .InputAttr("id", "empresaCepInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                                <div class="col-md-2 m-b-20">
+                                    <span>Número</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Numero)
+                                          .ID("empresaNumero")
+                                          .InputAttr("id", "empresaNumeroInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                                <div class="col-md-4 m-b-20">
+                                    <span>Logradouro</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Endereco)
+                                          .ID("empresaEndereco")
+                                          .InputAttr("id", "empresaEnderecoInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                                <div class="col-md-4 m-b-20">
+                                    <span>Complemento</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Complemento)
+                                          .ID("empresaComplemento")
+                                          .InputAttr("id", "empresaComplementoInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-5 m-b-20">
+                                    <span>Bairro</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Bairro)
+                                          .ID("empresaBairro")
+                                          .InputAttr("id", "empresaBairroInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                                <div class="col-md-5 m-b-20">
+                                    <span>Cidade</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Cidade)
+                                          .ID("empresaCidade")
+                                          .InputAttr("id", "empresaCidadeInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                                <div class="col-md-2 m-b-20">
+                                    <span>UF</span>
+                                    @(Html.DevExtreme()
+                                          .SelectBoxFor(x => x.Uf)
+                                          .Placeholder("")
+                                          .DataSource(Model.ListaUFs)
+                                          .ID("empresaUf")
+                                          .InputAttr("id", "empresaUfInput")
+                                          .DisplayExpr("Sigla")
+                                          .ValueExpr("Sigla"))
+                                </div>
+                            </div>
+                        </div>
+                    </from>
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("empresaButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    <button type="button" class="btn btn-default text-uppercase waves-effect" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-empresa').modal('hide');
+        $("#listaEmpresas").html(viewComponent);
+    };
+</script>

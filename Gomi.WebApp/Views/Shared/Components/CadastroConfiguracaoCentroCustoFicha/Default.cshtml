@@ -1,0 +1,96 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.CentroCusto
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarCentroCusto" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridCentroCustos">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idCentroCustos" })
+
+    <div id="add-centroCusto" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloCentroCusto"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                @using (Html.DevExtreme().ValidationGroup("centroCustoValidationGroup"))
+                {
+                    <div class="form-horizontal form-material">
+                        <div class="form-group">
+                            <div class="row">
+                                <div class="col-md-12 m-b-20">
+                                    <span>Descrição</span>
+                                    @(Html.DevExtreme()
+                                          .TextBoxFor(x => x.Descricao)
+                                          .ID("centroCustoDescricao")
+                                          .InputAttr("id", "centroCustoDescricaoInput")
+                                          .Mode(TextBoxMode.Text))
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("centroCustoButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("centroCustoValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("centroCustoButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarCentroCustoClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("centroCustoButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirCentroCustoClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function (viewComponent) {
+        $('#add-centroCusto').modal('hide');
+        $("#listaCentroCustos").html(viewComponent);
+    };
+
+    function habilitarCamposCentroCusto(permiteEditar) {
+        $("#centroCustoDescricao").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#centroCustoButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#centroCustoButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#centroCustoButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarCentroCustoClick() {
+        habilitarCamposCentroCusto(true);
+    }
+
+    function excluirCentroCustoClick() {
+        var centroCusto = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirCentroCusto',
+            type: 'POST',
+            data: centroCusto,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-centroCusto').modal('hide');
+                $("#listaCentroCustos").html(viewComponent);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposCentroCusto(registroNovo);
+    });
+
+</script>

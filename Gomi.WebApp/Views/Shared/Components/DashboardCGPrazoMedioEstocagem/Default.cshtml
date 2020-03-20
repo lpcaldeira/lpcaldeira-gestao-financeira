@@ -1,0 +1,29 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.PrazoMedioEstocagem>
+
+<h6 style="color:purple; font-size:12px;"> <b>Prazo Médio de Estocagem (PME)</b></h6>
+
+@(Html.DevExtreme().Chart()
+  .Size(s => s.Height(110).Width(330))
+  .CommonAxisSettings(c => c.Grid(g => g.Visible(false)).Label(l => l.DisplayMode(ChartLabelDisplayMode.Standard).Font(f => f.Size(8))))
+  .ArgumentAxis(a => a.Visible(true).TickInterval(t => t.Months(1)).AxisDivisionFactor(10).Tick(t => t.Visible(false)).Label(l => l.Format("MMM")).Position(Position.Bottom).Type(AxisScaleType.Discrete))
+  .ValueAxis(v => v.Add().Label(l => l.Visible(false)))
+  .CommonSeriesSettings(s => s
+        .ArgumentField("Mes")
+        .Type(SeriesType.Bar)
+        )
+  .BarWidth(0.9)
+
+  .Series(s => s
+        .Add()
+        .ValueField("Dias")
+        .Color("#17bebb")
+        
+    
+    )
+        .Tooltip(t => t
+        .Enabled(true))
+    .Legend(l => l .Visible(false)
+    )
+    .DataSource(Model)
+
+)

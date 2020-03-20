@@ -1,0 +1,354 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+
+<script type="text/javascript">
+    function excluirClienteClick() {
+        var cliente = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirCliente',
+            type: 'POST',
+            data: cliente,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-cliente').modal('hide');
+                $("#listaClientes").html(viewComponent);
+            }
+        });
+    }
+</script>
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarCliente" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridClientes">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idCliente" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorCliente" })
+
+    <div id="add-cliente" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloCliente"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("clienteValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                              .RadioGroupFor(x => x.TipoPessoa)
+                                              .ID("clienteTipoPessoa")
+                                              .Items(Model.TiposPessoa)
+                                              .OnValueChanged("radioGroupTipoPessoaCliente_valueChanged")
+                                              .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cnpj)
+                                              .ID("clienteCnpj")
+                                              .InputAttr("id", "clienteCnpjInput")
+                                              .Mask("00.000.000/0000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cpf)
+                                              .ID("clienteCpf")
+                                              .InputAttr("id", "clienteCpfInput")
+                                              .Mask("000.000.000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Nome)
+                                              .ID("clienteNome")
+                                              .InputAttr("id", "clienteNomeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Email)
+                                              .ID("clienteEmail")
+                                              .InputAttr("id", "clienteEmailInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Telefone)
+                                              .ID("clienteTelefone")
+                                              .InputAttr("id", "clienteTelefoneInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Celular)
+                                              .ID("clienteCelular")
+                                              .InputAttr("id", "clienteCelularInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="clientePessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.PessoaContato)
+                                              .ID("clientePessoaContato")
+                                              .InputAttr("id", "clientePessoaContatoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="clienteDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.RazaoSocial)
+                                              .ID("clienteRazaoSocial")
+                                              .InputAttr("id", "clienteRazaoSocialInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Im)
+                                              .ID("clienteIm")
+                                              .InputAttr("id", "clienteImInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Ie)
+                                              .ID("clienteIe")
+                                              .InputAttr("id", "clienteIeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cep)
+                                              .Mask("00000-000")
+                                              .ID("clienteCep")
+                                              .InputAttr("id", "clienteCepInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Endereco)
+                                              .ID("clienteEndereco")
+                                              .InputAttr("id", "clienteEnderecoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Numero)
+                                              .ID("clienteNumero")
+                                              .InputAttr("id", "clienteNumeroInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Complemento)
+                                              .ID("clienteComplemento")
+                                              .InputAttr("id", "clienteComplementoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Bairro)
+                                              .ID("clienteBairro")
+                                              .InputAttr("id", "clienteBairroInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cidade)
+                                              .ID("clienteCidade")
+                                              .InputAttr("id", "clienteCidadeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                              .SelectBoxFor(x => x.Uf)
+                                              .Placeholder("")
+                                              .DataSource(Model.ListaUFs)
+                                              .ID("clienteUf")
+                                              .InputAttr("id", "clienteUfInput")
+                                              .DisplayExpr("Sigla")
+                                              .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Pais)
+                                              .ID("clientePais")
+                                              .InputAttr("id", "clientePaisInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("clienteButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("clienteValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("clienteButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarClienteClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("clienteButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirClienteClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-cliente').modal('hide');
+        $("#listaClientes").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoCliente(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("clienteCpf").style.display = 'none';
+            document.getElementById("clienteCnpj").style.display = 'block';
+            document.getElementById("clientePessoaContato").style.display = 'block';
+            document.getElementById("clientePessoaContatoTitulo").style.display = 'block';
+            document.getElementById("clienteDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("clienteCnpj").style.display = 'none';
+            document.getElementById("clientePessoaContato").style.display = 'none';
+            document.getElementById("clientePessoaContatoTitulo").style.display = 'none';
+            document.getElementById("clienteDadosJuridicos").style.display = 'none';
+            document.getElementById("clienteCpf").style.display = 'block';
+        }
+    }
+
+    $("#clienteCnpjInput").keyup(function(event) {
+        var cnpj = $("#clienteCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#clienteNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#clienteEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#clienteTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#clienteRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#clienteCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#clienteEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#clienteNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#clienteBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#clienteCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#clienteUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#clientePais").dxTextBox("instance").option("value", "Brasil");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#clienteCepInput").keyup(function(event) {
+        var cep = $("#clienteCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#clienteCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#clienteEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#clienteNumero").dxTextBox("instance").option("value", "");
+                    $("#clienteBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#clienteCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#clienteUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#clientePais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaCliente_valueChanged(e) {
+        verificarCampoDocumentoCliente(e.value);
+    }
+
+    function habilitarCamposCliente(permiteEditar) {
+        $("#clienteTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#clienteCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clientePessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#clientePais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#clienteButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#clienteButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#clienteButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarClienteClick() {
+        habilitarCamposCliente(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoCliente(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposCliente(registroNovo);
+    });
+
+</script>

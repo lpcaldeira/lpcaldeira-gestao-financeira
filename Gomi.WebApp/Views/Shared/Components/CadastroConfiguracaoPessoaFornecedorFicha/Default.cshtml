@@ -1,0 +1,356 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+
+<script type="text/javascript">
+    function excluirFornecedorClick() {
+        var fornecedor = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirFornecedor',
+            type: 'POST',
+            data: fornecedor,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-fornecedor').modal('hide');
+                $("#listaFornecedores").html(viewComponent);
+            }
+        });
+    }
+</script>
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarFornecedor" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridFornecedores">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idFornecedor" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorFornecedor" })
+
+    <div id="add-fornecedor" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloFornecedor"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("fornecedorValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                                              .RadioGroupFor(x => x.TipoPessoa)
+                                                              .ID("fornecedorTipoPessoa")
+                                                              .Items(Model.TiposPessoa)
+                                                              .OnValueChanged("radioGroupTipoPessoaFornecedor_valueChanged")
+                                                              .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Cnpj)
+                                                              .ID("fornecedorCnpj")
+                                                              .InputAttr("id", "fornecedorCnpjInput")
+                                                              .Mask("00.000.000/0000-00")
+                                                              .Visible(true)
+                                                              .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Cpf)
+                                                              .ID("fornecedorCpf")
+                                                              .InputAttr("id", "fornecedorCpfInput")
+                                                              .Mask("000.000.000-00")
+                                                              .Visible(true)
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Nome)
+                                                              .ID("fornecedorNome")
+                                                              .InputAttr("id", "fornecedorNomeInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Email)
+                                                              .ID("fornecedorEmail")
+                                                              .InputAttr("id", "fornecedorEmailInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Telefone)
+                                                              .ID("fornecedorTelefone")
+                                                              .InputAttr("id", "fornecedorTelefoneInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Celular)
+                                                              .ID("fornecedorCelular")
+                                                              .InputAttr("id", "fornecedorCelularInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="fornecedorPessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.PessoaContato)
+                                                              .ID("fornecedorPessoaContato")
+                                                              .InputAttr("id", "fornecedorPessoaContatoInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="fornecedorDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.RazaoSocial)
+                                                              .ID("fornecedorRazaoSocial")
+                                                              .InputAttr("id", "fornecedorRazaoSocialInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Im)
+                                                              .ID("fornecedorIm")
+                                                              .InputAttr("id", "fornecedorRazaoImInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Ie)
+                                                              .ID("fornecedorIe")
+                                                              .InputAttr("id", "fornecedorIeInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Cep)
+                                                              .Mask("00000-000")
+                                                              .ID("fornecedorCep")
+                                                              .InputAttr("id", "fornecedorCepInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Endereco)
+                                                              .ID("fornecedorEndereco")
+                                                              .InputAttr("id", "fornecedorEnderecoInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Numero)
+                                                              .ID("fornecedorNumero")
+                                                              .InputAttr("id", "fornecedorNumeroInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Complemento)
+                                                              .ID("fornecedorComplemento")
+                                                              .InputAttr("id", "fornecedorComplementoInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Bairro)
+                                                              .ID("fornecedorBairro")
+                                                              .InputAttr("id", "fornecedorBairroInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Cidade)
+                                                              .ID("fornecedorCidade")
+                                                              .InputAttr("id", "fornecedorCidadeInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                                              .SelectBoxFor(x => x.Uf)
+                                                              .Placeholder("")
+                                                              .DataSource(Model.ListaUFs)
+                                                              .ID("fornecedorUf")
+                                                              .InputAttr("id", "fornecedorUfInput")
+                                                              .DisplayExpr("Sigla")
+                                                              .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                                              .TextBoxFor(x => x.Pais)
+                                                              .ID("fornecedorPais")
+                                                              .InputAttr("id", "fornecedorPaisInput")
+                                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                                          .Button()
+                                          .ID("fornecedorButtonSalvar")
+                                          .UseSubmitBehavior(true)
+                                          .ValidationGroup("fornecedorValidationGroup")
+                                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                                          .Button()
+                                          .ID("fornecedorButtonEditar")
+                                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                                          .Text("Editar")
+                                          .OnClick("editarFornecedorClick"))
+                    @(Html.DevExtreme()
+                                          .Button()
+                                          .ID("fornecedorButtonExcluir")
+                                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                          .Text("Excluir")
+                                          .OnClick("excluirFornecedorClick"))
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-fornecedor').modal('hide');
+        $("#listaFornecedores").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoFornecedor(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("fornecedorCpf").style.display = 'none';
+            document.getElementById("fornecedorCnpj").style.display = 'block';
+            document.getElementById("fornecedorPessoaContato").style.display = 'block';
+            document.getElementById("fornecedorPessoaContatoTitulo").style.display = 'block';
+            document.getElementById("fornecedorDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("fornecedorCnpj").style.display = 'none';
+            document.getElementById("fornecedorPessoaContato").style.display = 'none';
+            document.getElementById("fornecedorPessoaContatoTitulo").style.display = 'none';
+            document.getElementById("fornecedorDadosJuridicos").style.display = 'none';
+            document.getElementById("fornecedorCpf").style.display = 'block';
+        }
+    }
+
+    $("#fornecedorCnpjInput").keyup(function(event) {
+        var cnpj = $("#fornecedorCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#fornecedorNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#fornecedorEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#fornecedorTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#fornecedorRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#fornecedorCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#fornecedorEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#fornecedorNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#fornecedorBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#fornecedorCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#fornecedorUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#fornecedorPais").dxTextBox("instance").option("value", "Brasil");
+                     }
+                }
+            });
+        }
+    });
+
+    $("#fornecedorCepInput").keyup(function(event) {
+        var cep = $("#fornecedorCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#fornecedorCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#fornecedorEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#fornecedorNumero").dxTextBox("instance").option("value", "");
+                    $("#fornecedorBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#fornecedorCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#fornecedorUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#fornecedorPais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaFornecedor_valueChanged(e) {
+        verificarCampoDocumentoFornecedor(e.value);
+    }
+
+    function habilitarCamposFornecedor(permiteEditar) {
+        $("#fornecedorTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#fornecedorCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorPessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorPais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#fornecedorButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#fornecedorButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#fornecedorButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarFornecedorClick() {
+        habilitarCamposFornecedor(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoFornecedor(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposFornecedor(registroNovo);
+    });
+
+</script>

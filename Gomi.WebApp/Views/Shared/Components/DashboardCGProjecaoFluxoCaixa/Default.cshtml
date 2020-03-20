@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ProjecaoFluxoCaixa>
+
+<h6 style="color:purple; font-size:12px;"> <b>Análise de Projeção do Fluxo de Caixa</b></h6>
+
+@(Html.DevExtreme().Chart()
+    .DataSource(Model)
+    .ArgumentAxis(a => a.Visible(true).AxisDivisionFactor(10).Tick(t => t.Visible(false)).Label(l => l.Format("d/M")).Position(Position.Bottom).Type(AxisScaleType.Discrete))   
+   .Series(s =>
+    {
+        s.Add()
+           .ValueField("Diferencaacumuladadia")
+            .Color("#0099ff")
+            .Type(SeriesType.Line)
+            .Point(p => p.Visible(false))
+            .Label(l => l.Visible(false))
+            .DashStyle(DashStyle.Solid)
+            .ArgumentField("Dia")
+            .IgnoreEmptyPoints(true)
+            .Name("Realizado")
+            .HoverMode(ChartSeriesHoverMode.None);
+        
+        s.Add()
+           .ValueField("Diferencaacumuladaprev")
+            .Color("#0099ff")
+            .Type(SeriesType.Line)
+            .Point(p => p.Visible(false))
+            .Label(l => l.Visible(false))
+            .DashStyle(DashStyle.Dash)
+            .ArgumentField("Diaprev")
+            .IgnoreEmptyPoints(true)
+            .Name("Previsão")
+            .HoverMode(ChartSeriesHoverMode.None);
+    })
+
+    .Legend(l => l.Visible(false))
+    .Size(s => s.Height(296).Width(475))
+    .Tooltip(t => t.Enabled(true))
+
+)

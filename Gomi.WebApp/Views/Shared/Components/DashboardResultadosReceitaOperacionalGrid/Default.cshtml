@@ -1,0 +1,19 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ReceitaOperacional>
+
+@(Html.DevExtreme().DataGrid()
+
+    //.Width(1200)
+    //.Height(100)
+    .DataSource(Model)
+
+    .Columns(c =>
+    {
+        c.Add().DataField("Mes").Width(100).Format(Format.MonthAndYear);
+        c.Add().DataField("Valor").Width(80);
+    })
+
+)
+
+

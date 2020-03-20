@@ -1,0 +1,358 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+
+<script type="text/javascript">
+
+    function excluirGovernoClick() {
+        var governo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirGoverno',
+            type: 'POST',
+            data: governo,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-governo').modal('hide');
+                $("#listaGovernos").html(viewComponent);
+            }
+        });
+    }
+
+</script>    
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarGoverno" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridGovernos">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idGoverno" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorGoverno" })
+
+    <div id="add-governo" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloGoverno"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("governoValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                                      .RadioGroupFor(x => x.TipoPessoa)
+                                                      .ID("governoTipoPessoa")
+                                                      .Items(Model.TiposPessoa)
+                                                      .OnValueChanged("radioGroupTipoPessoaGoverno_valueChanged")
+                                                      .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cnpj)
+                                                      .ID("governoCnpj")
+                                                      .InputAttr("id", "governoCnpjInput")
+                                                      .Mask("00.000.000/0000-00")
+                                                      .Visible(true)
+                                                      .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cpf)
+                                                      .ID("governoCpf")
+                                                      .InputAttr("id", "governoCpfInput")
+                                                      .Mask("000.000.000-00")
+                                                      .Visible(true)
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Nome)
+                                                      .ID("governoNome")
+                                                      .InputAttr("id", "governoNomeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Email)
+                                                      .ID("governoEmail")
+                                                      .InputAttr("id", "governoEmailInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Telefone)
+                                                      .ID("governoTelefone")
+                                                      .InputAttr("id", "governoTelefoneInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Celular)
+                                                      .ID("governoCelular")
+                                                      .InputAttr("id", "governoCelularInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="governoPessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.PessoaContato)
+                                                      .ID("governoPessoaContato")
+                                                      .InputAttr("id", "governoPessoaContatoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="governoDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.RazaoSocial)
+                                                      .ID("governoRazaoSocial")
+                                                      .InputAttr("id", "governoRazaoSocialInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Im)
+                                                      .ID("governoIm")
+                                                      .InputAttr("id", "governoRazaoImInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Ie)
+                                                      .ID("governoIe")
+                                                      .InputAttr("id", "governoIeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cep)
+                                                      .Mask("00000-000")
+                                                      .ID("governoCep")
+                                                      .InputAttr("id", "governoCepInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Endereco)
+                                                      .ID("governoEndereco")
+                                                      .InputAttr("id", "governoEnderecoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Numero)
+                                                      .ID("governoNumero")
+                                                      .InputAttr("id", "governoNumeroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Complemento)
+                                                      .ID("governoComplemento")
+                                                      .InputAttr("id", "governoComplementoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Bairro)
+                                                      .ID("governoBairro")
+                                                      .InputAttr("id", "governoBairroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cidade)
+                                                      .ID("governoCidade")
+                                                      .InputAttr("id", "governoCidadeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                                      .SelectBoxFor(x => x.Uf)
+                                                      .Placeholder("")
+                                                      .DataSource(Model.ListaUFs)
+                                                      .ID("governoUf")
+                                                      .InputAttr("id", "governoUfInput")
+                                                      .DisplayExpr("Sigla")
+                                                      .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Pais)
+                                                      .ID("governoPais")
+                                                      .InputAttr("id", "governoPaisInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("governoButtonSalvar")
+                                  .UseSubmitBehavior(true)
+                                  .ValidationGroup("governoValidationGroup")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Salvar"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("governoButtonEditar")
+                                  .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                                  .Text("Editar")
+                                  .OnClick("editarGovernoClick"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("governoButtonExcluir")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Excluir")
+                                  .OnClick("excluirGovernoClick"))
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-governo').modal('hide');
+        $("#listaGovernos").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoGoverno(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("governoCpf").style.display = 'none';
+            document.getElementById("governoCnpj").style.display = 'block';
+            document.getElementById("governoPessoaContato").style.display = 'block';
+            document.getElementById("governoPessoaContatoTitulo").style.display = 'block';
+            document.getElementById("governoDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("governoCnpj").style.display = 'none';
+            document.getElementById("governoPessoaContato").style.display = 'none';
+            document.getElementById("governoPessoaContatoTitulo").style.display = 'none';
+            document.getElementById("governoDadosJuridicos").style.display = 'none';
+            document.getElementById("governoCpf").style.display = 'block';
+        }
+    }
+
+    $("#governoCnpjInput").keyup(function(event) {
+        var cnpj = $("#governoCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#governoNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#governoEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#governoTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#governoRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#governoCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#governoEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#governoNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#governoBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#governoCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#governoUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#governoPais").dxTextBox("instance").option("value", "Brasil");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#governoCepInput").keyup(function(event) {
+        var cep = $("#governoCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#governoCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#governoEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#governoNumero").dxTextBox("instance").option("value", "");
+                    $("#governoBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#governoCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#governoUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#governoPais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaGoverno_valueChanged(e) {
+        verificarCampoDocumentoGoverno(e.value);
+    }
+
+    function habilitarCamposGoverno(permiteEditar) {
+        $("#governoTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#governoCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoPessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#governoPais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#governoButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#governoButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#governoButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarGovernoClick() {
+        habilitarCamposGoverno(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoGoverno(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposGoverno(registroNovo);
+    });
+
+</script>

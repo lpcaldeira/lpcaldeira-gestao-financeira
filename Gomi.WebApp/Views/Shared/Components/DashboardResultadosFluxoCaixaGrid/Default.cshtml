@@ -1,0 +1,19 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.FluxoResultado>
+
+@(Html.DevExtreme().DataGrid()
+
+
+    .DataSource(Model)
+
+    .Columns(c =>
+    {
+        c.Add().DataField("Mes").Width(80).Format(Format.Month);
+        c.Add().DataField("Gastos").Caption("Pagamentos").Width(160).Format(Format.Currency);
+        c.Add().DataField("Receitas").Caption("Recebimentos").Width(160).Format(Format.Currency);
+        c.Add().DataField("Liquido").Caption("Resultado Líquido").Width(160).Format(Format.Currency);
+        c.Add().DataField("Operacional").Caption("Resultado Operacional").Width(160).Format(Format.Currency);
+    })
+
+)
+
+  

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.FluxoResultado>
+
+<h6 style="color:purple;font-size:12px; "> <b>Fluxo de Caixa do Semestre</b></h6> 
+@(Html.DevExtreme().Chart()
+    
+    .CommonAxisSettings(c => c.Grid(g => g.Visible(false)).Label(l => l.DisplayMode(ChartLabelDisplayMode.Standard).Font(f => f.Size(8))))
+    .ValueAxis(v => v.Add().Label(l => l.Visible(false)))
+    .ArgumentAxis(a => a.Visible(false).TickInterval(t=> t.Months(1)).AxisDivisionFactor(10).Tick(t=>t.Visible(false)).Label(l=>l.Format("MMM")).Position(Position.Bottom))
+    .BarWidth(0.7)
+    .CommonSeriesSettings(s => 
+        s.ArgumentField("Mes")
+            .Type(SeriesType.FullStackedBar)
+            .Label(l => l.Visible(false).Format(Format.Month)))
+    
+    .Series(s =>
+     {
+
+         s.Add().Type(SeriesType.StackedBar).ValueField("Gastos").Name("Pagamentos").Color("#f7487c");
+         s.Add().Type(SeriesType.StackedBar).ValueField("Receitas").Name("Recebimentos").Color("#17bebb");
+         s.Add().Type(SeriesType.Line).ValueField("Liquido").Name("Resultado Líquido").Color("#ffc90c");
+         s.Add().Type(SeriesType.Line).ValueField("Operacional").Name("Resultado Operacional").Color("#990099");
+     })
+
+    .Tooltip(t => t
+      .Enabled(true)
+      .Shared(true)
+      .Format(f => f.Type(Format.Currency).Precision(1))
+    )
+
+    .Legend(l => l
+      .VerticalAlignment(VerticalEdge.Top)
+      .HorizontalAlignment(HorizontalAlignment.Center)
+      .Font(f=> f.Size(8))
+    )
+    .Size(s => s.Height(190).Width(400))
+
+    .DataSource(Model)
+)
+<div style="position:absolute; left:19px ;top:116px;"><hr style="border-top: 1px #000 solid;" align="center" width="375" size="10"  color=black>   </div>

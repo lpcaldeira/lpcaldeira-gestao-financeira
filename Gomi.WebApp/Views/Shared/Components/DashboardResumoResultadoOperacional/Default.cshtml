@@ -1,0 +1,35 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Dashboard.ResultadoOperacional
+<h6 style="color:purple;font-size:12px; position:absolute; "> <b>Resultado Operacional</b></h6> <br/>
+@(Html.DevExtreme().DateBox()
+                .Type(DateBoxType.Date)
+
+                .DisplayFormat(Format.Month)
+                .Value(DateTime.Now)
+                .MaxZoomLevel(CalendarZoomLevel.Year)
+                .Width(120)
+                .Height(20)
+)
+@(Html.DevExtreme().PieChart()
+    
+    .Size(s => s.Height(170).Width(150))
+    .Type(PieChartType.Doughnut)
+    .Palette(new[] { "#bebebe", "#ffc90c" })
+    .InnerRadius(2)
+    .Legend(l => l.Visible(false))
+    .Tooltip(t => t
+        .Enabled(true)
+        )
+    .CommonSeriesSettings( c=> c.ArgumentField("Descricao") )
+    .Series(s => s
+        .Add()
+        .ValueField("Valor") 
+        )
+        
+    .DataSource(Model.Resultados)
+    )
+
+<h3 style="color:black;font-size:10px; position:absolute; left:40px; top:200px; font-family:sans-serif"> <b>@(Model.Saldo)</b></h3>
+
+<div style="color:black ;font-family:fantasy; font-size:25px; position:absolute; margin-left:40px; justify-content:center; top:110px;">
+    @(Model.Percentual)%
+</div>

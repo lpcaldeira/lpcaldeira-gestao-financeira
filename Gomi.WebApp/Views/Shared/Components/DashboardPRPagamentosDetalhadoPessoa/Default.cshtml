@@ -1,0 +1,41 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.PagamentosDetalhadoPessoa>
+
+<h6 > Proximas Contas a Pagar</h6>
+
+
+@(Html.DevExtreme().DataGrid()
+
+    .DataSource(Model)
+    .Height("100%")
+    .Paging(p => p.Enabled(false))
+     //.FilterRow(f => f.Visible(true))
+    .HeaderFilter(h => h.Visible(true))
+    .ShowBorders(false)
+    .ShowColumnLines(false)
+    .ShowRowLines(true)
+    // .RowAlternationEnabled(true)
+    
+   
+    .Columns(c =>
+     {
+
+
+         c.Add().DataField("Vencimento");
+         c.Add().DataField("Pessoa");
+         c.Add().DataField("Descricao");
+         c.Add().DataField("Valor").Format(Format.Currency).AllowFiltering(false);
+         c.Add().DataField("Situacao");
+     })
+
+    )
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var fontSize = 8;
+
+        $('.dx-datagrid').css({'font-size': fontSize + 'px'});
+    });
+</script>   

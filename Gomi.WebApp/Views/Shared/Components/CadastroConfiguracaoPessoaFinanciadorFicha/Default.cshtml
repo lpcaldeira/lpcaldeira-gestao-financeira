@@ -1,0 +1,356 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+    
+<script type="text/javascript">
+    function excluirFinanciadorClick() {
+        var financiador = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirFinanciador',
+            type: 'POST',
+            data: financiador,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-financiador').modal('hide');
+                $("#listaFinanciadores").html(viewComponent);
+            }
+        });
+    }
+</script>    
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarFinanciador" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridFinanciadores">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idFinanciador" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorFinanciador" })
+
+    <div id="add-financiador" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloFinanciador"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("financiadorValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                                      .RadioGroupFor(x => x.TipoPessoa)
+                                                      .ID("financiadorTipoPessoa")
+                                                      .Items(Model.TiposPessoa)
+                                                      .OnValueChanged("radioGroupTipoPessoaFinanciador_valueChanged")
+                                                      .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cnpj)
+                                                      .ID("financiadorCnpj")
+                                                      .InputAttr("id", "financiadorCnpjInput")
+                                                      .Mask("00.000.000/0000-00")
+                                                      .Visible(true)
+                                                      .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cpf)
+                                                      .ID("financiadorCpf")
+                                                      .InputAttr("id", "financiadorCpfInput")
+                                                      .Mask("000.000.000-00")
+                                                      .Visible(true)
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Nome)
+                                                      .ID("financiadorNome")
+                                                      .InputAttr("id", "financiadorNomeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Email)
+                                                      .ID("financiadorEmail")
+                                                      .InputAttr("id", "financiadorEmailInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Telefone)
+                                                      .ID("financiadorTelefone")
+                                                      .InputAttr("id", "financiadorTelefoneInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Celular)
+                                                      .ID("financiadorCelular")
+                                                      .InputAttr("id", "financiadorCelularInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="financiadorPessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.PessoaContato)
+                                                      .ID("financiadorPessoaContato")
+                                                      .InputAttr("id", "financiadorPessoaContatoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="financiadorDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.RazaoSocial)
+                                                      .ID("financiadorRazaoSocial")
+                                                      .InputAttr("id", "financiadorRazaoSocialInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Im)
+                                                      .ID("financiadorIm")
+                                                      .InputAttr("id", "financiadorRazaoImInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Ie)
+                                                      .ID("financiadorIe")
+                                                      .InputAttr("id", "financiadorIeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cep)
+                                                      .Mask("00000-000")
+                                                      .ID("financiadorCep")
+                                                      .InputAttr("id", "financiadorCepInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Endereco)
+                                                      .ID("financiadorEndereco")
+                                                      .InputAttr("id", "financiadorEnderecoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Numero)
+                                                      .ID("financiadorNumero")
+                                                      .InputAttr("id", "financiadorNumeroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Complemento)
+                                                      .ID("financiadorComplemento")
+                                                      .InputAttr("id", "financiadorComplementoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Bairro)
+                                                      .ID("financiadorBairro")
+                                                      .InputAttr("id", "financiadorBairroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cidade)
+                                                      .ID("financiadorCidade")
+                                                      .InputAttr("id", "financiadorCidadeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                                      .SelectBoxFor(x => x.Uf)
+                                                      .Placeholder("")
+                                                      .DataSource(Model.ListaUFs)
+                                                      .ID("financiadorUf")
+                                                      .InputAttr("id", "financiadorUfInput")
+                                                      .DisplayExpr("Sigla")
+                                                      .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Pais)
+                                                      .ID("financiadorPais")
+                                                      .InputAttr("id", "financiadorPaisInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("financiadorButtonSalvar")
+                                  .UseSubmitBehavior(true)
+                                  .ValidationGroup("financiadorValidationGroup")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Salvar"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("financiadorButtonEditar")
+                                  .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                                  .Text("Editar")
+                                  .OnClick("editarFinanciadorClick"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("financiadorButtonExcluir")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Excluir")
+                                  .OnClick("excluirFinanciadorClick"))
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-financiador').modal('hide');
+        $("#listaFinanciadores").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoFinanciador(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("financiadorCpf").style.display = 'none';
+            document.getElementById("financiadorCnpj").style.display = 'block';
+            document.getElementById("financiadorPessoaContato").style.display = 'block';
+            document.getElementById("financiadorPessoaContatoTitulo").style.display = 'block';
+            document.getElementById("financiadorDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("financiadorCnpj").style.display = 'none';
+            document.getElementById("financiadorPessoaContato").style.display = 'none';
+            document.getElementById("financiadorPessoaContatoTitulo").style.display = 'none';
+            document.getElementById("financiadorDadosJuridicos").style.display = 'none';
+            document.getElementById("financiadorCpf").style.display = 'block';
+        }
+    }
+
+    $("#financiadorCnpjInput").keyup(function(event) {
+        var cnpj = $("#financiadorCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#financiadorNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#financiadorEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#financiadorTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#financiadorRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#financiadorCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#financiadorEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#financiadorNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#financiadorBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#financiadorCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#financiadorUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#financiadorPais").dxTextBox("instance").option("value", "Brasil");
+                     }
+                }
+            });
+        }
+    });
+
+    $("#financiadorCepInput").keyup(function(event) {
+        var cep = $("#financiadorCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#financiadorCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#financiadorEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#financiadorNumero").dxTextBox("instance").option("value", "");
+                    $("#financiadorBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#financiadorCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#financiadorUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#financiadorPais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaFinanciador_valueChanged(e) {
+        verificarCampoDocumentoFinanciador(e.value);
+    }
+
+    function habilitarCamposFinanciador(permiteEditar) {
+        $("#financiadorTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#financiadorCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorPessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorPais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#financiadorButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#financiadorButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#financiadorButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarFinanciadorClick() {
+        habilitarCamposFinanciador(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoFinanciador(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposFinanciador(registroNovo);
+    });
+
+</script>

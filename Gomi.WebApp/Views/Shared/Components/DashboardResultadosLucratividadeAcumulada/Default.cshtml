@@ -1,0 +1,41 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.AnaliseFinanceira>
+
+<h6 class="text-justify" style="color:purple;font-size:12px;"> <b>Lucratividade Acumulada</b></h6>
+
+@(Html.DevExtreme().Chart()
+
+     .CommonAxisSettings(c => c.Grid(g => g.Visible(false)).Label(l => l.DisplayMode(ChartLabelDisplayMode.Standard).Font(f => f.Size(8))))
+        .ArgumentAxis(a => a.Visible(true).TickInterval(t => t.Months(1)).AxisDivisionFactor(10).Tick(t => t.Visible(false)).Label(l => l.Format("MMM")).Position(Position.Bottom).Type(AxisScaleType.Discrete))
+
+    .CommonSeriesSettings(s => s
+        .ArgumentField("Mes")
+        .Type(SeriesType.Spline)
+        .HoverMode(ChartSeriesHoverMode.IncludePoints)
+        .Point(p => p.HoverMode(ChartPointInteractionMode.AllArgumentPoints))
+)
+    .Series(s =>
+    {
+        s.Add().ValueField("MC_per").Name("Margem Contribuição").Color("#00ff00");
+        s.Add().ValueField("RO_per").Name("Resultado Operacional").Color("#0040ff");
+        s.Add().ValueField("RF_per").Name("Resultadofinanceiro").Color("#ffff00");
+    })
+
+      .Size(s => s.Height(110).Width(440))
+      .Legend(l => l
+        .VerticalAlignment(VerticalEdge.Top)
+        .HorizontalAlignment(HorizontalAlignment.Center))
+  .Tooltip(t => t.Enabled(true).Shared(true))
+  .Size(s => s.Height(120).Width(500))
+  .DataSource(Model)
+  .ValueAxis(a => a
+            .Add()
+            .Label(l => l
+                .CustomizeText(@<text>
+            function() {
+            return this.valueText + "%";
+            }
+            </text>)))
+)
+

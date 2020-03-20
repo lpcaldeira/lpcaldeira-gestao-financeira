@@ -1,0 +1,20 @@
+﻿
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.DistribuicaoResultado>
+     
+
+@(Html.DevExtreme().DataGrid()
+    
+    .DataSource(Model)
+    .Columns(c =>
+    {
+
+    c.Add().DataField("Categoria").Width(180);
+
+    c.Add().DataField("Mesatual").Caption("Mês Atual").Format(Format.Currency);
+    c.Add().DataField("Mesanterior").Caption("Mês Anterior").Format(Format.Currency);
+    c.Add().DataField("Diferenca").Caption("Diferença").Format(Format.Currency);
+    c.Add().DataField("Percentual").Caption("%").Format(Format.Currency).Width(50);
+})
+
+    .Height(400)
+)

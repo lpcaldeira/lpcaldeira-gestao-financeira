@@ -1,0 +1,54 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.FluxoResultado>
+
+<h6 class="text-justify" style="color:purple;font-size:12px;"><b> Fluxo de Caixa do Semestre</b></h6>
+@(Html.DevExtreme().Chart()
+
+    .CommonAxisSettings(c => c.Grid(g => g.Visible(false)).Label( l=> l.DisplayMode(ChartLabelDisplayMode.Standard)))
+    .ValueAxis(v => v.Add().Label(l => l.Visible(false)))
+        .ArgumentAxis(a => a.Visible(true).TickInterval(t => t.Months(1)).AxisDivisionFactor(10).Tick(t => t.Visible(false)).Label(l => l.Format("MMM")).Position(Position.Bottom).Type(AxisScaleType.Discrete))
+
+    .CommonSeriesSettings(s => s.ArgumentField("Mes").Type(SeriesType.FullStackedBar).Label(l => l.Visible(false)))
+        
+    .Series(s =>
+    {
+        s.Add().Type(SeriesType.StackedBar).ValueField("Gastos").Name("Pagamentos").Color("#f7487c");
+        s.Add().Type(SeriesType.StackedBar).ValueField("Receitas").Name("Recebimentos").Color("#17bebb");
+        s.Add().Type(SeriesType.Line).ValueField("Liquido").Name("Resultado Líquido").Color("#ffc90c");
+        s.Add().Type(SeriesType.Line).ValueField("Operacional").Name("Resultado Operacional").Color("#990099");
+    })
+
+    .Tooltip(t => t
+      .Enabled(true)
+      .Shared(true)
+      .Format(f => f.Type(Format.Currency).Precision(1))
+    )
+
+    .Legend(l => l
+      .Visible(true) 
+      .VerticalAlignment(VerticalEdge.Top)
+      .HorizontalAlignment(HorizontalAlignment.Center)
+    )
+     .Size(s => s.Height(110).Width(500))
+    .DataSource(Model)
+)
+
+<button type="button" style="position:absolute; top:5px; left:450px; color:white; " class="btn btn-danger " data-toggle="modal" data-target="#add-grid-fluxo-caixa">+</button> 
+
+<div id="add-grid-fluxo-caixa" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg ">
+        <div class="modal-content modal-lg">
+            <div class="modal-header  modal-lg">
+                <h4 class="modal-title">Fluxo de Caixa</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body  modal-lg">
+                <div>
+                    <vc:dashboard-resultados-fluxo-caixa-grid max-priority="3" is-done="false">
+                    </vc:dashboard-resultados-fluxo-caixa-grid>
+                </div>
+            </div>
+            <div class="modal-footer modal-lg">
+            </div>
+        </div>
+    </div>
+</div>   

@@ -1,0 +1,205 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Conta
+
+<script>
+    function excluirContaClick() {
+        var idConta = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Id));
+        var result = DevExpress.ui.dialog.confirm("Deseja excluir o registro?", "Atenção");
+        result.done(function (confirmou) {
+            if (confirmou) {
+                $.ajax({
+                    url: '/CadastrosConfiguracoes/ExcluirConta?id=' + parseInt(idConta),
+                    type: 'POST',
+                    processData: false,
+                    success: function (data) {
+                        $('#add-conta').modal('hide');
+                        $("#gridContasid").dxDataGrid("instance").refresh();
+                    }
+                });
+            }
+        });
+    }
+</script>    
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarConta" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridContas">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idContas" })
+    @Html.HiddenFor(model => model.IdBanco, new { @id = "idBancoConta" })
+    @Html.HiddenFor(model => model.IdCaixa, new { @id = "idCaixaConta" })
+
+    <div id="add-conta" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloConta"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div> 
+                <div class="modal-body">
+                   @using (Html.DevExtreme().ValidationGroup("contaValidationGroup"))
+                   {
+                       <div class="form-horizontal form-material">
+                           <div class="form-group">
+                               <div class="row">
+                                   <div class="col-md-6 m-b-20">
+                                       <span>Banco</span>
+                                       @(Html.DevExtreme()
+                                             .SelectBoxFor(x => x.NomeBanco)
+                                             .ID("contaBanco")
+                                             .InputAttr("id", "contaBancoInput")
+                                             .DataSource(Model.ListaBancos)
+                                             .DisplayExpr("Nome")
+                                             .ValueExpr("Nome")
+                                             .SearchEnabled(true)
+                                             .SearchMode(DropDownSearchMode.Contains)
+                                             .OnSelectionChanged("selecionarBancoChanged"))
+                                   </div>
+                               </div>
+                               <div class="row">
+                                   <div class="col-md-12 m-b-20">
+                                       <span>Nome</span>
+                                       @(Html.DevExtreme()
+                                             .TextBoxFor(x => x.Nome)
+                                             .ID("contaNome")
+                                             .InputAttr("id", "contaNomeInput")
+                                             .Mode(TextBoxMode.Text))
+                                   </div>
+                               </div>
+                               <div class="row">
+                                   <div class="col-md-4 m-b-20">
+                                       <span>Saldo inicial</span>
+                                       @(Html.DevExtreme()
+                                             .NumberBoxFor(x => x.SaldoInicial)
+                                             .Format("#,##0.00")
+                                             .ID("contaSaldoInicial")
+                                             .InputAttr(new
+                                             {
+                                                 @id = "contaSaldoInicialInput",
+                                                 @onClick = "this.select();"
+                                             }))
+                                   </div>
+                                   <div class="col-md-3 m-b-20">
+                                       <span>Data do saldo</span>
+                                       @(Html.DevExtreme()
+                                             .DateBoxFor(x => x.DataSaldoInicial)
+                                             .Type(DateBoxType.Date)
+                                             .ID("contaDataSaldo")
+                                             .InputAttr("id", "contaDataSaldoInput"))
+                                   </div>
+                               </div>
+                               <div class="row">
+                                   <div class="col-md-4 m-b-20">
+                                       <span>Tipo da conta</span>
+                                       @(Html.DevExtreme()
+                                             .SelectBoxFor(x => x.TipoConta)
+                                             .ID("contaTipoConta")
+                                             .InputAttr("id", "contaTipoContaInput")
+                                             .SearchEnabled(true)
+                                             .SearchMode(DropDownSearchMode.StartsWith)
+                                             .DataSource(Model.TiposConta))
+                                   </div>
+                               </div>
+                               <div class="row">
+                                   <div class="col-md-3 m-b-20">
+                                       <span>Agência</span>
+                                       @(Html.DevExtreme()
+                                             .TextBoxFor(x => x.NumeroAgencia)
+                                             .ID("contaNumeroAgencia")
+                                             .InputAttr("id", "contaNumeroAgenciaInput")
+                                             .Mode(TextBoxMode.Text))
+                                   </div>
+                                   <div class="col-md-3 m-b-20">
+                                       <span>Conta</span>
+                                       @(Html.DevExtreme()
+                                             .TextBoxFor(x => x.NumeroConta)
+                                             .ID("contaNumeroConta")
+                                             .InputAttr("id", "contaNumeroContaInput")
+                                             .Mode(TextBoxMode.Text))
+                                   </div>
+                                   <div class="col-md-1 m-b-20">
+                                       @(Html.DevExtreme()
+                                             .TextBoxFor(x => x.DigitoVerificadorConta)
+                                             .ID("contaDigitoVerificadorConta")
+                                             .InputAttr("id", "contaDigitoVerificadorContaInput")
+                                             .ElementAttr("style", "margin-top: 24px;")
+                                             .Mode(TextBoxMode.Text))
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("contaButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("contaValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("contaButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarContaClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("contaButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirContaClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    var onSuccess = function (viewComponent) {
+        $('#add-conta').modal('hide');
+        $("#gridContasid").dxDataGrid("instance").refresh();
+    };
+
+    function selecionarBancoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idBancoConta').val(valor);
+            }
+        });
+    }
+
+    function habilitarCamposConta(permiteEditar) {
+        $("#contaBanco").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#contaNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#contaSaldoInicial").dxNumberBox("instance").option("disabled", !permiteEditar);
+        $("#contaSaldoInicial").dxNumberBox("instance").option("rtlEnabled", true);
+        $("#contaDataSaldo").dxDateBox("instance").option("disabled", !permiteEditar);
+        $("#contaTipoConta").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#contaNumeroAgencia").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#contaNumeroConta").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#contaDigitoVerificadorConta").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#contaButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#contaButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#contaButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarContaClick() {
+        habilitarCamposConta(true);
+    }
+
+    $(document).ready(function () {
+        $("#contaDataSaldoInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#contaDataSaldo").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });
+        $("#contaDataSaldoInput").focus(function () {
+            $("#contaDataSaldoInput").setCursorPosition(0);
+        });
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposConta(registroNovo);
+    });
+
+</script>

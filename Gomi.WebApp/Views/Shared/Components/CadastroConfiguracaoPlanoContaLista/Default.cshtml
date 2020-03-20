@@ -1,0 +1,86 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.PlanoConta>
+
+<script type="text/javascript">
+
+    function editPlanoContaButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarPlanoConta',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaPlanoConta").html(viewComponent);
+                $('#add-planoConta').modal('show');
+            }
+        });
+    }
+
+    function insertPlanoContaButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirPlanoConta',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaPlanoConta").html(viewComponent);
+                $('#add-planoConta').modal('show');
+            }
+        });
+    }
+
+    function list_groupTemplate(data, index, element) {
+        if (data.key === 0)
+            element.append("Receitas operacionais");
+        else if (data.key === 1)
+            element.append("Deduções");
+        else if (data.key === 2)
+            element.append("Custos");
+        else if (data.key === 3)
+            element.append("Despesas operacionais");
+        else if (data.key === 4)
+            element.append("Atividades de financiamento");
+        else if (data.key === 5)
+            element.append("Atividades de investimento");
+    }
+
+    function list_itemTemplate(data, index, element) {
+
+        if (data.IsEntrada) {
+            element.append("<i class='dx-icon-chevronup' style='color: green; padding-right: 5px; font-weight: bold;'></i>");
+
+        } else {
+            element.append("<i class='dx-icon-chevrondown' style='color: red; padding-right: 5px; font-weight: bold;'></i>");
+        }
+        element.append(data.Categoria);
+        element.append(
+            $("<button>Editar</button>")
+            .attr({ "type": "button", "class": "btn-link", "style": "float: right; width: 100px;" })
+            .click(function() {
+                editPlanoContaButtonClick(data);
+            }));
+    }
+
+</script>
+
+<form>
+   
+    <h4 class="card-title" style="font-family:Assistant;">Lista de categorias</h4>
+    @(Html.DevExtreme()
+          .Button()
+          .ID("planoContaInserirButton")
+          .ElementAttr("class", "btn btn-success")
+          .Text("Nova categoria")
+          .Hint("Adicionar categoria")
+          .Icon("add")
+          .OnClick("insertPlanoContaButtonClick"))
+
+    @(Html.DevExtreme()
+          .List()
+          .Height("100%")
+          .Grouped(true)
+          .SelectionMode(ListSelectionMode.None)
+          .ShowSelectionControls(false)
+          .DataSource(Model)
+          .DataSourceOptions(o => o.Group("Grupo"))
+          .GroupTemplate(new JS("list_groupTemplate"))
+          .ItemTemplate(new JS("list_itemTemplate")))
+</form>

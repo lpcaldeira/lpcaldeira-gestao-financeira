@@ -1,0 +1,18 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Dashboard.PrevisaoFinanceiraProximaSemana;
+
+    <br/>
+<h6  style="color:purple;font-size:12px;"><b> Previsões Financeiras para a Próxima Semana:</b></h6>
+<p>
+    <h6 style="color:black;font-size:12px;">  @(Model.DataInicialSemana.ToShortDateString()) a @(Model.DataFinalSemana.ToShortDateString()) </h6>
+</p>
+<p>
+    <h6 style="color:green;font-size:12px;"><b> Contas a Receber: @(Model.TotalContasPagar)</b></h6>
+</p>
+<p>
+    <h6 style="color:red;font-size:12px;"><b> Contas a Pagar: @(Model.TotalContasReceber)</b></h6>
+</p>
+<p>
+    <h6 style="color:black;font-size:12px;"><b> Diferença:  @(Model.Diferenca)</b></h6>
+</p>
+
+

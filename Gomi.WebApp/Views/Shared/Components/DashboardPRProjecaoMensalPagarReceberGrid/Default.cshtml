@@ -1,0 +1,23 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ProjecaoMensal>
+
+@(Html.DevExtreme().DataGrid()
+
+   //.Height(100)
+   // .Width(900)
+    .DataSource(Model)
+
+    .Columns(c =>
+    {
+        c.Add().DataField("Mes").Format(Format.MonthAndYear).Width(50);
+        c.Add().DataField("Receber").Width(50).Format(Format.Currency);
+        c.Add().DataField("Pagar").Width(50).Format(Format.Currency);
+        c.Add().DataField("Diferenca").Width(50).Caption("Diferença").Format(Format.Currency);
+        c.Add().DataField("Diferencaacumulada").Width(70).Caption("Diferença Acumulada").Format(Format.Currency);
+
+    })
+
+)
+
+

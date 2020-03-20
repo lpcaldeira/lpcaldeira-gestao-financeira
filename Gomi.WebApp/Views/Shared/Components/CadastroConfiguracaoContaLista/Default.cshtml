@@ -1,0 +1,91 @@
+﻿
+
+<script type="text/javascript">
+
+    function editContaButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarConta',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaConta").html(viewComponent);
+                $('#add-conta').modal('show');
+            }
+        });
+    }
+    function insertContaButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirConta',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaConta").html(viewComponent);
+                $('#add-conta').modal('show');
+            }
+        });
+    }
+    
+    function insertTransferenciaButtonClick_conta() {
+        $.ajax({
+            url: '/Movimentacoes/InserirTransferencia',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaTransferencia").html(viewComponent);
+                $('#add-transferencia').modal('show');
+            }
+        });
+    }
+</script>
+
+
+<h4 class="card-title" style="font-family:Assistant;">Lista de contas</h4>
+
+<div class="form-horizontal form-material">
+    <div class="form-group">
+        <div class="row">
+
+            <div class="col-12 ">
+
+                @(Html.DevExtreme().Button().OnClick(@<text>function (b) {
+                insertContaButtonClick();
+                }</text>).Text("Nova Conta").ElementAttr("class", "btn btn-success").Icon("add"))
+
+
+                @(Html.DevExtreme().Button().OnClick(@<text>function (b) {
+                insertTransferenciaButtonClick_conta();
+                }</text>).Text("Nova Transferencia").ElementAttr("class", "btn btn-info").Icon("add"))
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ListaConta>()
+.ID("gridContasid")
+.DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterListaContas").Key("Id"))
+.TwoWayBindingEnabled(true)
+.ShowColumnLines(false)
+.ShowRowLines(true)
+.ShowBorders(true)
+.RowAlternationEnabled(true)
+.LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+.NoDataText("Nenhum registro encontrado.")
+.Paging(p => p.PageSize(15))
+.Columns(columns =>
+{
+columns.Add().DataField("Nome").Caption("Conta").Alignment(HorizontalAlignment.Left).SortOrder(SortOrder.Asc);
+ 
+columns.Add().DataField("Numero").Caption("N° da Conta").Alignment(HorizontalAlignment.Left);
+columns.Add().DataField("Tipo").Caption("Tipo da Conta").Alignment(HorizontalAlignment.Left);
+columns.Add().DataField("Saldo").Caption("Saldo").DataType(GridColumnDataType.Number).Format("0#.##00").Alignment(HorizontalAlignment.Left);
+columns.Add().Caption("Conciliação");
+columns.Add().CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").HoverStateEnabled(true).Hint("Editar").Icon("edit").OnClick("function (e) { editContaButtonClick(data)}")</text>).Width(20);
+
+})
+          .Summary(s => s.TotalItems(t => t.Add().Column("Saldo").SummaryType(SummaryType.Sum).ValueFormat("#.##")).Texts(t => t.Sum("{0}")))
+
+)

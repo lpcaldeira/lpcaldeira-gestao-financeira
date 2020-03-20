@@ -1,0 +1,171 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Transferencia
+
+<form asp-controller="Movimentacoes" asp-action="SalvarTransferencia" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridTransferencias">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idTransferencia" })
+    @Html.HiddenFor(model => model.TransferenciaOrigem.Id, new { @id = "idTransferenciaOrigemId" })
+    @Html.HiddenFor(model => model.TransferenciaOrigem.IdCaixa, new { @id = "idCaixaTransferenciaOrigem" })
+    @Html.HiddenFor(model => model.TransferenciaOrigem.IdConta, new { @id = "idContaTransferenciaOrigem" })
+    @Html.HiddenFor(model => model.TransferenciaDestino.Id, new { @id = "idTransferenciaDestinoId" })
+    @Html.HiddenFor(model => model.TransferenciaDestino.IdCaixa, new { @id = "idCaixaTransferenciaDestino" })
+    @Html.HiddenFor(model => model.TransferenciaDestino.IdConta, new { @id = "idContaTransferenciaDestino" })
+    @Html.HiddenFor(model => model.IdTransferenciaOrigem, new { @id = "idTransferenciaOrigem" })
+    @Html.HiddenFor(model => model.IdTransferenciaDestino, new { @id = "idTransferenciaDestino" })
+
+    <div id="add-transferencia" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloTransferencia"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("transferenciaValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Data</span>
+                                        @(Html.DevExtreme()
+                                              .DateBoxFor(x => x.DataTransferencia)
+                                              .DisplayFormat("dd/MM/yyyy")
+                                              .ID("transferenciaData")
+                                              .Type(DateBoxType.Date)
+                                              .InputAttr("id", "transferenciaDataInput"))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Valor</span>
+                                        @(Html.DevExtreme()
+                                              .NumberBoxFor(x => x.Valor)
+                                              .Format("#,##0.00")
+                                              .ID("transferenciaValor")
+                                              .InputAttr(new
+                                              {
+                                                  @id = "transferenciaValorInput",
+                                                  @onClick = "this.select();"
+                                              }))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Conta de origem</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.TransferenciaOrigem.NomeConta)
+                                              .ID("transferenciaContaOrigem")
+                                              .InputAttr("id", "transferenciaContaOrigemInput")
+                                              .DataSource(Model.Contas)
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Nome")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarContaTransferenciaOrigemChanged"))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Conta de Destino</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.TransferenciaDestino.NomeConta)
+                                              .ID("transferenciaContaDestino")
+                                              .InputAttr("id", "transferenciaContaDestinoInput")
+                                              .DataSource(Model.Contas)
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Nome")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarContaTransferenciaDestinoChanged"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("transferenciaButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("transferenciaValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("transferenciaButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarTransferenciaClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("transferenciaButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirTransferenciaClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+    
+<script type="text/javascript">
+
+    var onSuccess = function (data) {
+        $('#add-transferencia').modal('hide');
+    };
+
+    function selecionarContaTransferenciaOrigemChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaTransferenciaOrigem').val(valor);
+            }
+        });
+    }
+
+    function selecionarContaTransferenciaDestinoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaTransferenciaDestino').val(valor);
+            }
+        });
+    }
+
+   function habilitarCamposTransferencia(permiteEditar) {
+       $("#transferenciaData").dxDateBox("instance").option("disabled", !permiteEditar);
+       $("#transferenciaValor").dxNumberBox("instance").option("disabled", !permiteEditar);
+       $("#transferenciaValor").dxNumberBox("instance").option("rtlEnabled", true);
+       $("#transferenciaContaOrigem").dxSelectBox("instance").option("disabled", !permiteEditar);
+       $("#transferenciaContaDestino").dxSelectBox("instance").option("disabled", !permiteEditar);
+       $("#transferenciaButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+       $("#transferenciaButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+       $("#transferenciaButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarTransferenciaClick() {
+        habilitarCamposTransferencia(true);
+    }
+
+    function excluirTransferenciaClick() {
+        var recebimento = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/Movimentacoes/ExcluirTransferencia',
+            type: 'POST',
+            data: recebimento,
+            dataType: 'html',
+            success: function (data) {
+                $('#add-transferencia').modal('hide');
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        $("#transferenciaDataInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#transferenciaData").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });
+        $("#transferenciaDataInput").focus(function () {
+            $("#transferenciaDataInput").setCursorPosition(0);
+        });
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposTransferencia(registroNovo);
+    });
+
+</script>

@@ -1,0 +1,43 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.ContasReceberTransacionadores>
+
+<small class="text-justify" style="color:purple; font-size:12px;"> <b>Contas a Receber</b></small>
+@(Html.DevExtreme().PieChart()
+     .Size(s => s.Height(155).Width(300))
+
+    .Palette(VizPalette.GreenMist)
+
+    .Series(s => s
+        .Add()
+        .ArgumentField("Transacionador")
+        .ValueField("Valor")
+
+    )
+
+   .Tooltip(t => t.Enabled(true)
+    .CustomizeTooltip(@<text>
+            function() {
+                return { text: this.argumentText + "<br>"  + this.valueText };
+            }
+</text>)
+    )
+   .Legend(l => l.Visible(true).VerticalAlignment(VerticalEdge.Top))
+    .DataSource(Model)
+)
+@(Html.DevExtreme().DataGrid()
+
+    .DataSource(Model)
+    //.Height("100%")
+    .Paging(p => p.Enabled(false))
+     .HeaderFilter(h => h.Visible(true))
+    .ShowBorders(false)
+    .ShowColumnLines(false)
+    .ShowRowLines(true)
+
+    .Columns(c =>
+    {
+        c.Add().DataField("Transacionador");
+        c.Add().DataField("Valor").Format(Format.Currency).AllowFiltering(false);
+    })
+)

@@ -1,0 +1,356 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+    
+<script type="text/javascript">
+    
+    function excluirBancoClick() {
+        var banco = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirBanco',
+            type: 'POST',
+            data: banco,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-banco').modal('hide');
+                $("#listaBancos").html(viewComponent);
+            }
+        });
+    }
+
+</script>
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarBanco" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridBancos">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idBanco" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorBanco" })
+
+    <div id="add-banco" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloBanco"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("bancoValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                              .RadioGroupFor(x => x.TipoPessoa)
+                                              .ID("bancoTipoPessoa")
+                                              .Items(Model.TiposPessoa)
+                                              .OnValueChanged("radioGroupTipoPessoaBanco_valueChanged")
+                                              .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cnpj)
+                                              .ID("bancoCnpj")
+                                              .InputAttr("id", "bancoCnpjInput")
+                                              .Mask("00.000.000/0000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cpf)
+                                              .ID("bancoCpf")
+                                              .InputAttr("id", "bancoCpfInput")
+                                              .Mask("000.000.000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Nome)
+                                              .ID("bancoNome")
+                                              .InputAttr("id", "bancoNomeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Email)
+                                              .ID("bancoEmail")
+                                              .InputAttr("id", "bancoEmailInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Telefone)
+                                              .ID("bancoTelefone")
+                                              .InputAttr("id", "bancoTelefoneInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Celular)
+                                              .ID("bancoCelular")
+                                              .InputAttr("id", "bancoCelularInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="bancoPessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.PessoaContato)
+                                              .ID("bancoPessoaContato")
+                                              .InputAttr("id", "bancoPessoaContatoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="bancoDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.RazaoSocial)
+                                              .ID("bancoRazaoSocial")
+                                              .InputAttr("id", "bancoRazaoSocialInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Im)
+                                              .ID("bancoIm")
+                                              .InputAttr("id", "bancoRazaoImInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Ie)
+                                              .ID("bancoIe")
+                                              .InputAttr("id", "bancoIeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cep)
+                                              .Mask("00000-000")
+                                              .ID("bancoCep")
+                                              .InputAttr("id", "bancoCepInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Endereco)
+                                              .ID("bancoEndereco")
+                                              .InputAttr("id", "bancoEnderecoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Numero)
+                                              .ID("bancoNumero")
+                                              .InputAttr("id", "bancoNumeroInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Complemento)
+                                              .ID("bancoComplemento")
+                                              .InputAttr("id", "bancoComplementoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Bairro)
+                                              .ID("bancoBairro")
+                                              .InputAttr("id", "bancoBairroInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cidade)
+                                              .ID("bancoCidade")
+                                              .InputAttr("id", "bancoCidadeInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                              .SelectBoxFor(x => x.Uf)
+                                              .Placeholder("")
+                                              .DataSource(Model.ListaUFs)
+                                              .ID("bancoUf")
+                                              .InputAttr("id", "bancoUfInput")
+                                              .DisplayExpr("Sigla")
+                                              .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Pais)
+                                              .ID("bancoPais")
+                                              .InputAttr("id", "bancoPaisInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("bancoButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("bancoValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("bancoButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarBancoClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("bancoButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirBancoClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-banco').modal('hide');
+        $("#listaBancos").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoBanco(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("bancoCpf").style.display = 'none';
+            document.getElementById("bancoCnpj").style.display = 'block';
+            document.getElementById("bancoPessoaContato").style.display = 'block';
+            document.getElementById("bancoPessoaContatoTitulo").style.display = 'block';
+            document.getElementById("bancoDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("bancoCnpj").style.display = 'none';
+            document.getElementById("bancoPessoaContato").style.display = 'none';
+            document.getElementById("bancoPessoaContatoTitulo").style.display = 'none';
+            document.getElementById("bancoDadosJuridicos").style.display = 'none';
+            document.getElementById("bancoCpf").style.display = 'block';
+        }
+    }
+
+    $("#bancoCnpjInput").keyup(function(event) {
+        var cnpj = $("#bancoCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#bancoNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#bancoEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#bancoTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#bancoRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#bancoCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#bancoEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#bancoNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#bancoBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#bancoCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#bancoUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#bancoPais").dxTextBox("instance").option("value", "Brasil");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#bancoCepInput").keyup(function(event) {
+        var cep = $("#bancoCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#bancoCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#bancoEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#bancoNumero").dxTextBox("instance").option("value", "");
+                    $("#bancoBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#bancoCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#bancoUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#bancoPais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaBanco_valueChanged(e) {
+        verificarCampoDocumentoBanco(e.value);
+    }
+
+    function habilitarCamposBanco(permiteEditar) {
+        $("#bancoTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#bancoCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoPessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#bancoPais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#bancoButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#bancoButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#bancoButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarBancoClick() {
+        habilitarCamposBanco(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoBanco(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposBanco(registroNovo);
+    });
+
+</script>

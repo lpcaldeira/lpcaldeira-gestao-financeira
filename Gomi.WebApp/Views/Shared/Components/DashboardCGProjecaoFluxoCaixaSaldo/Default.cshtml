@@ -1,0 +1,22 @@
+﻿    @model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.SaldoDisponibilidade>
+
+<h6 style="color:purple; font-size:12px;"> <b> Saldo de Disponibilidade</b></h6> 
+
+@(Html.DevExtreme().DataGrid()
+    
+    .Height(273)
+    .Width(260)
+    
+    .DataSource(Model)
+    .Columns(c =>
+    {
+        c.Add().DataField("Conta").Width(135);
+        c.Add().DataField("Saldo").Width(125).Alignment(HorizontalAlignment.Right);
+    })
+    
+    .ShowColumnHeaders(false)
+    .ShowColumnLines(false)
+    .ShowRowLines(true)
+    .Paging(p => p.Enabled(false))
+)
+

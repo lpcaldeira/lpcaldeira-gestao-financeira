@@ -1,0 +1,585 @@
+﻿<script type="text/javascript">
+
+    function deleteMovimentacaoButtonClick(data, tipoMovimento) {
+        $.ajax({
+            url: '/Movimentacoes/Excluir' + tipoMovimento,
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                //$("#resumoMovimentao").html(viewComponent);
+                if (tipoMovimento === 'Pagamento') {
+                    $("#contaspagas").dxDataGrid("instance").refresh();
+                    $("#contasapagar").dxDataGrid("instance").refresh();
+                } else {
+                    $("#contasrecebidas").dxDataGrid("instance").refresh();
+                    $("#contasareceber").dxDataGrid("instance").refresh();
+                }
+            }
+        });
+    }
+
+    function editMovimentacaoButtonClick(data, tipoMovimento) {
+        $.ajax({
+            url: '/Movimentacoes/Editar' + tipoMovimento,
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#ficha" + tipoMovimento).html(viewComponent);
+                $("#add" + tipoMovimento).modal('show');
+            }
+        });
+    }
+
+    function insertMovimentacaoButtonClick(tipoMovimento) {
+        $.ajax({
+            url: '/Movimentacoes/Inserir' + tipoMovimento,
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#ficha" + tipoMovimento).html(viewComponent);
+                $("#add" + tipoMovimento).modal('show');
+            }
+        });
+    }
+
+    function insertTransferenciaButtonClick() {
+        $.ajax({
+            url: '/Movimentacoes/InserirTransferencia',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaTransferencia").html(viewComponent);
+                $('#add-transferencia').modal('show');
+            }
+        });
+    }
+
+    function pesquisarMovimentacoesDoMes() {
+        var dataHoraAtual = new Date();
+        var dataHoraInicial = new Date(dataHoraAtual.getFullYear(), dataHoraAtual.getMonth(), 1, 0, 0, 0);
+        var dataHoraFinal = new Date(dataHoraAtual.getFullYear(), dataHoraAtual.getMonth(), 31, 23, 59, 59);
+        pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal);
+    }
+
+    function pesquisarMovimentacoesDoDia() {
+        var dataHoraAtual = new Date();
+        var dataHoraInicial = new Date(dataHoraAtual.getFullYear(), dataHoraAtual.getMonth(), dataHoraAtual.getDate(), 0, 0, 0);
+        var dataHoraFinal = new Date(dataHoraAtual.getFullYear(), dataHoraAtual.getMonth(), dataHoraAtual.getDate(), 23, 59, 59);
+        pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal);
+    }
+
+    function pesquisarMovimentacoesDaSemana() {
+        var dataHoraAtual = new Date();
+        var primeiroDiaSemana = dataHoraAtual.getDate() - dataHoraAtual.getDay();
+        var ultimoDiaSemana = primeiroDiaSemana + 6;
+
+        var dataPrimeiroDiaSemana = new Date(dataHoraAtual.setDate(primeiroDiaSemana));
+        var dataUltimoDiaSemana = new Date(dataHoraAtual.setDate(ultimoDiaSemana));
+        var dataHoraInicial = new Date(dataPrimeiroDiaSemana.getFullYear(), dataPrimeiroDiaSemana.getMonth(), dataPrimeiroDiaSemana.getDate(), 0, 0, 0);
+        var dataHoraFinal = new Date(dataUltimoDiaSemana.getFullYear(), dataUltimoDiaSemana.getMonth(), dataUltimoDiaSemana.getDate(), 23, 59, 59);
+
+        pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal);
+    }
+
+    function pesquisarMovimentacoesDaProximaSemana() {
+
+        var dataHoraAtual = new Date();
+        var primeiroDiaSemana = dataHoraAtual.getDate() - dataHoraAtual.getDay();
+        var ultimoDiaSemana = primeiroDiaSemana + 6;
+        var primeiroDiaProximaSemana = ultimoDiaSemana + 1;
+        var ultimoDiaProximaSemana = primeiroDiaProximaSemana + 6;
+
+        var dataPrimeiroDiaProximaSemana = new Date(dataHoraAtual.setDate(primeiroDiaProximaSemana));
+        var dataUltimoDiaProximaSemana = new Date(dataHoraAtual.setDate(ultimoDiaProximaSemana));
+        var dataHoraInicial = new Date(dataPrimeiroDiaProximaSemana.getFullYear(), dataPrimeiroDiaProximaSemana.getMonth(), dataPrimeiroDiaProximaSemana.getDate(), 0, 0, 0);
+        var dataHoraFinal = new Date(dataUltimoDiaProximaSemana.getFullYear(), dataUltimoDiaProximaSemana.getMonth(), dataUltimoDiaProximaSemana.getDate(), 23, 59, 59);
+
+        pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal);
+    }
+
+    function pesquisarMovimentacoesDoMesSelecionado(data) {
+        var dataHoraInicial = new Date(data.getFullYear(), data.getMonth(), 1, 0, 0, 0);
+        var dataHoraFinal = new Date(data.getFullYear(), data.getMonth(), 31, 23, 59, 59);
+        pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal);
+    }
+
+    function FiltrarPeriodoResumo() {
+
+        var dataHoraInicial = $("#dateBoxInicialResumo").dxDateBox("instance").option("value");
+        var dataHoraFinal = $("#dateBoxFinalResumo").dxDateBox("instance").option("value");
+
+        var dataGridReceber = $("#contasareceber").dxDataGrid("instance");
+        var dataGridRecebido = $("#contasrecebidas").dxDataGrid("instance");
+        dataGridReceber.filter([
+            ["Vencimento", ">=", dataHoraInicial],
+            ["Vencimento", "<=", dataHoraFinal]
+        ]);
+        dataGridRecebido.filter([
+            ["Datarecebimento", ">=", dataHoraInicial],
+            ["Datarecebimento", "<=", dataHoraFinal]
+        ]);
+
+        var dataGridPagar = $("#contasapagar").dxDataGrid("instance");
+        var dataGridPago = $("#contaspagas").dxDataGrid("instance");
+
+        dataGridPagar.filter([
+            ["Vencimento", ">=", dataHoraInicial],
+            ["Vencimento", "<=", dataHoraFinal]
+        ]);
+        dataGridPago.filter([
+            ["Datapagamento", ">=", dataHoraInicial],
+            ["Datapagamento", "<=", dataHoraFinal]
+        ]);
+
+    };
+
+    function pesquisarMovimentacoesPorPeriodo(dataHoraInicial, dataHoraFinal) {
+        var dataGridReceber = $("#contasareceber").dxDataGrid("instance");
+        var dataGridRecebido = $("#contasrecebidas").dxDataGrid("instance");
+        dataGridReceber.filter([
+            ["Vencimento", ">=", dataHoraInicial],
+            ["Vencimento", "<=", dataHoraFinal]
+        ]);
+        dataGridRecebido.filter([
+            ["Datarecebimento", ">=", dataHoraInicial],
+            ["Datarecebimento", "<=", dataHoraFinal]
+        ]);
+
+        var dataGridPagar = $("#contasapagar").dxDataGrid("instance");
+        var dataGridPago = $("#contaspagas").dxDataGrid("instance");
+
+        dataGridPagar.filter([
+            ["Vencimento", ">=", dataHoraInicial],
+            ["Vencimento", "<=", dataHoraFinal]
+        ]);
+        dataGridPago.filter([
+            ["Datapagamento", ">=", dataHoraInicial],
+            ["Datapagamento", "<=", dataHoraFinal]
+        ]);
+    }
+
+</script>
+
+
+
+<div class="row">
+    <div class="col-lg-9 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        @(Html.DevExtreme().Button()
+                                      .OnClick(@<text>function (b) { insertMovimentacaoButtonClick("Recebimento"); }</text>)
+                                      .Text("Novo Recebimento")
+                                      .ElementAttr("class", "btn btn-success")
+                                      .Icon("add"))
+
+                        @(Html.DevExtreme().Button()
+                                      .OnClick(@<text>function (b) { insertMovimentacaoButtonClick("Pagamento"); }</text>)
+                                      .Text("Novo Pagamento")
+                                      .ElementAttr("class", "btn btn-success")
+                                      .Icon("add"))
+
+                        @(Html.DevExtreme().Button()
+                                      .OnClick(@<text>function (b) { insertTransferenciaButtonClick(); }</text>)
+                                      .Text("Nova Transferencia")
+                                      .ElementAttr("class", "btn btn-info")
+                                      .Icon("add"))
+
+                        <p></p>
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+             @*                      <div class="col-3 ">
+
+                                        @(Html.DevExtreme().DateBox()
+                                .Type(DateBoxType.Date)
+                                .OnValueChanged(@<text>function (e) { pesquisarMovimentacoesDoMesSelecionado(e.value); }</text>)
+                                .DisplayFormat(Format.Month)
+                                .Value(DateTime.Now)
+                                .MaxZoomLevel(CalendarZoomLevel.Year)
+                                .Width(178)
+                                .Height(35) )
+                                    </div> *@
+                                    
+                                        <div style="margin-left:10px;"  >
+                                            @(Html.DevExtreme().DateBox()
+                    .ID("dateBoxInicialResumo")
+                    .InputAttr("id", "dateBoxInicialInput")
+                    .Type(DateBoxType.Date)
+                    .Value(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1))
+                    .Width(100)
+                    .Height(33))
+                                        </div>
+
+                                        <div style="margin-left:3px;" >
+                                            @(Html.DevExtreme().DateBox()
+                    .ID("dateBoxFinalResumo")
+                    .InputAttr("id", "dateBoxFinalInput")
+                    .Type(DateBoxType.Date)
+                    .Value(new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddMonths(1).AddDays(-1))
+                    .Width(100)
+                    .Height(33))
+                                        </div>
+
+                                    <div style="margin-left:3px;">
+                                        @(Html.DevExtreme().Button()
+                    .Text("OK")
+                    .Type(ButtonType.Normal)
+                    .OnClick(@<text>function () { FiltrarPeriodoResumo (); }</text>).Height(33))
+                                    </div>
+                                    
+
+                                    <div class="col-7 ">
+                                        @(Html.DevExtreme().Button()
+                                                      .OnClick(@<text>function (b) { pesquisarMovimentacoesDoMes(); }</text>)
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("filter")
+                                                      .Text("Mês Atual")
+                                                      .Height(33))
+
+                                        @(Html.DevExtreme().Button()
+                                                      .OnClick(@<text>function (b) { pesquisarMovimentacoesDoDia(); }</text>)
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("filter")
+                                                      .Text("Hoje")
+                                                      .Height(33))
+
+                                        @(Html.DevExtreme().Button()
+                                                      .OnClick(@<text>function (b) { pesquisarMovimentacoesDaSemana(); }</text>)
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("filter")
+                                                      .Text("Esta Semana")
+                                                      .Height(33))
+
+                                        @(Html.DevExtreme().Button()
+                                                      .OnClick(@<text>function (b) { pesquisarMovimentacoesDaProximaSemana(); }</text>)
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("filter")
+                                                      .Text("Próxima Semana")
+                                                      .Height(33))
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-5 " style="background-color:#ddf5d7;height:35px;">
+
+                                        <div class="dx-field-label" style="font-weight:bold; color:black; width:unset;">&nbsp RECEBIMENTOS</div>
+                                    </div>
+                                    <div class="col-5 ">
+                                        @(Html.DevExtreme().SelectBox()
+                                              .ID("ListaPessoaRec")
+                                              .InputAttr("id", "recebimentoNomePessoaInput")
+                                              .DataSource(d => d.Mvc()
+                                                  .Controller("Movimentacoes")
+                                                  .LoadAction("GetPessoasRecebimento")
+                                                  .Key("Nome"))
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Id")
+                                              .SearchEnabled(true)
+                                              .Placeholder("Pesquisar uma Pessoa...")
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnValueChanged("FiltrarPessoaRec"))
+                                    </div>
+
+                                    <div class="col-2">
+                                        @(Html.DevExtreme().Button()
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("close")
+                                                      .Text("Limpar")
+                                                      .OnClick("LimparFiltroRec"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <script>
+                            function FiltrarPessoaRec(data) {
+                                var dataGridReceber = $("#contasareceber").dxDataGrid("instance");
+                                var dataGridRecebido = $("#contasrecebidas").dxDataGrid("instance");
+                                dataGridReceber.filter(["Idpessoa", "=", data.value]);
+                                dataGridRecebido.filter(["Idpessoa", "=", data.value]);
+                            }
+                        </script>
+
+                        <script>
+                            function LimparFiltroRec(data) {
+                                var dataGridReceber = $("#contasareceber").dxDataGrid("instance");
+                                var dataGridRecebido = $("#contasrecebidas").dxDataGrid("instance");
+                                var ListaPessoaRec = $("#ListaPessoaRec").dxSelectBox("instance");
+
+                                ListaPessoaRec.reset();
+                                dataGridReceber.clearFilter();
+                                dataGridRecebido.clearFilter();
+                            }
+
+                        </script>
+
+
+                        <div style="font-family:Assistant; font-size:12px; color:black; text-align:left; font-weight:bold;"> CONTAS A RECEBER</div>
+
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.ListaReceber>()
+                                  .ID("contasareceber")
+                                  .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterRecebimentosEmAberto").Key("Id"))
+                                  .TwoWayBindingEnabled(true)
+                                  .ShowColumnLines(false)
+                                  .ShowRowLines(true)
+                                  .ShowBorders(false)
+                                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                                  .Selection(s => s.Mode(SelectionMode.Single))
+                                  .RowAlternationEnabled(false)
+                                  .NoDataText("Nenhum registro encontrado.")
+                                  .Columns(columns =>
+                                  {
+                                  columns.Add().DataField("Idpessoa").Visible(false);
+                                  columns.Add().DataField("Vencimento").Caption("DATA VENC.").DataType(GridColumnDataType.Date).Width(100);
+                                  columns.Add().Caption("NOME")
+                                          .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text(new JS("data.Pessoa")).OnClick("function (e) { editMovimentacaoButtonClick(data, 'Recebimento') }")</text>).Width(170);
+                                      columns.Add().DataField("Categoria").Caption("CATEGORIA").Width(170);
+                                      columns.Add().DataField("Descricao").Caption("DESCRIÇÃO").Width(370);
+                                      columns.Add().DataField("Valor").Caption("VALOR").Width(100).Format("0##.##00").DataType(GridColumnDataType.Number);
+                                      //columns.Add().Width(160).Alignment(HorizontalAlignment.Center)
+                                      //             .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Icon("edit").OnClick("function (e) { editMovimentacaoButtonClick(data, 'Recebimento') }")</text>).Width(30);
+                                      // columns.Add().Width(160).Alignment(HorizontalAlignment.Center)
+                                      //            .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Icon("trash").OnClick("function (e) { deleteMovimentacaoButtonClick(data, 'Recebimento') }")</text>);
+
+                                  })
+                                      .Height(200)
+                                      .Summary(s => s.TotalItems(t => t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0##.##00")).Texts(t => t.Sum("{0}"))))
+
+                        <div style="font-family:Assistant; font-size:12px; color:black ; font-weight:bold;">CONTAS RECEBIDAS</div>
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.ListaReceber>()
+                                  .ID("contasrecebidas")
+                                  .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterRecebimentosRecebido"))
+                                  .TwoWayBindingEnabled(true)
+                                  .ShowColumnLines(false)
+                                  .ShowRowLines(true)
+                                  .ShowBorders(false)
+                                  .RowAlternationEnabled(false)
+                                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                                  .Selection(s => s.Mode(SelectionMode.Single))
+                                  .NoDataText("Nenhum registro encontrado.")
+                                  // .SearchPanel(s => s.Visible(true).Width(280))
+                                  //.FilterRow(f => f.Visible(true))
+                                  //  .Paging(p => p.PageSize(10))
+                                  .Columns(columns =>
+                                  {
+                                  columns.Add().DataField("Idpessoa").Visible(false);
+                                  columns.Add().DataField("Datarecebimento").Caption("DATA RECEB.").DataType(GridColumnDataType.Date).Width(100);
+                                  columns.Add().Caption("NOME")
+                                          .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text(new JS("data.Pessoa")).OnClick("function (e) { editMovimentacaoButtonClick(data, 'Recebimento') }")</text>).Width(170);
+                                      columns.Add().DataField("Categoria").Caption("CATEGORIA").Width(170);
+                                      columns.Add().DataField("Descricao").Caption("DESCRIÇÃO").Width(370);
+                                      columns.Add().DataField("Valorrecebido").Caption("VALOR").Width(100).Format("0##.##00").DataType(GridColumnDataType.Number);
+                                  })
+                                      .Height(200)
+                                      .Summary(s => s.TotalItems(t => t.Add().Column("Valorrecebido").SummaryType(SummaryType.Sum).ValueFormat("0#.##00")).Texts(t => t.Sum("{0}"))))
+
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-5 " style="background-color:#f7d2d2;height:35px;">
+
+                                        <div class="dx-field-label" style="font-weight:bold; color:black; width:unset;">&nbsp PAGAMENTOS</div>
+                                    </div>
+                                    <div class="col-5 ">
+                                        @(Html.DevExtreme().SelectBox()
+                                              .ID("ListaPessoaPag")
+                                              .InputAttr("id", "recebimentoNomePessoaInput")
+                                              .DataSource(d => d.Mvc()
+                                                  .Controller("Movimentacoes")
+                                                  .LoadAction("GetPessoasPagamento")
+                                                  .Key("Nome"))
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Id")
+                                              .SearchEnabled(true)
+                                              .Placeholder("Pesquisar uma Pessoa...")
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnValueChanged("FiltrarPessoaPag"))
+
+                                    </div>
+                                    <div class="col-2 ">
+                                        @(Html.DevExtreme()
+                                                      .Button()
+                                                      .ElementAttr("class", "btn")
+                                                      .Icon("close")
+                                                      .Text("Limpar")
+                                                      .OnClick("LimparFiltroPag"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+                            function FiltrarPessoaPag(data) {
+                                var dataGridPagar = $("#contasapagar").dxDataGrid("instance");
+                                var dataGridPago = $("#contaspagas").dxDataGrid("instance");
+
+                                dataGridPagar.filter(["Idpessoa", "=", data.value]);
+                                dataGridPago.filter(["Idpessoa", "=", data.value]);
+                            }
+
+                        </script>
+
+                        <script>
+                            function LimparFiltroPag(data) {
+                                var dataGridPagar = $("#contasapagar").dxDataGrid("instance");
+                                var dataGridPago = $("#contaspagas").dxDataGrid("instance");
+                                var ListaPessoaPag = $("#ListaPessoaPag").dxSelectBox("instance");
+
+                                ListaPessoaPag.reset();
+
+                                dataGridPagar.clearFilter();
+                                dataGridPago.clearFilter();
+                            }
+
+                        </script>
+
+
+                        <div style="font-family:Assistant; font-size:12px; color:black;  font-weight:bold;">CONTAS A PAGAR</div>
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.Pagar>()
+                                  .ID("contasapagar")
+                                  .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterPagamentosEmAberto"))
+                                  .TwoWayBindingEnabled(true)
+                                  .ShowColumnLines(false)
+                                  .ShowRowLines(true)
+                                  .ShowBorders(false)
+                                  .Selection(s => s.Mode(SelectionMode.Single))
+                                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                                  .RowAlternationEnabled(false)
+                                  .NoDataText("Nenhum registro encontrado.")
+                                  // .SearchPanel(s => s.Visible(true).Width(280))
+                                  //.FilterRow(f => f.Visible(true))
+                                  //.Paging(p => p.PageSize(10))
+                                  .Columns(columns =>
+                                  {
+                                  columns.Add().DataField("Idpessoa").Visible(false);
+                                  columns.Add().DataField("Vencimento").Caption("DATA VENC.").DataType(GridColumnDataType.Date).Width(100);
+                                  columns.Add().Caption("NOME")
+                                          .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text(new JS("data.Pessoa")).OnClick("function (e) { editMovimentacaoButtonClick(data, 'Pagamento') }")</text>).Width(170);
+                                      columns.Add().DataField("Categoria").Caption("CATEGORIA").Width(170);
+                                      columns.Add().DataField("Descricao").Caption("DESCRIÇÃO").Width(370);
+                                      columns.Add().DataField("Valor").Caption("VALOR").Width(100).Format("0#.##00").DataType(GridColumnDataType.Number);
+                                  })
+                                      .Height(200)
+                                      .Summary(s => s.TotalItems(t => t.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00")).Texts(t => t.Sum("{0}")))
+                        )
+
+                        <div style=" font-family:Assistant; font-size:12px; color:black ; font-weight:bold;">CONTAS PAGAS</div>
+
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.Pagar>()
+                                  .ID("contaspagas")
+                                  .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterPagamentosPagos"))
+                                  .TwoWayBindingEnabled(true)
+                                  .ShowColumnLines(false)
+                                  .ShowRowLines(true)
+                                  .ShowBorders(false)
+                                  .RowAlternationEnabled(false)
+                                  .Selection(s => s.Mode(SelectionMode.Single))
+                                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                                  .NoDataText("Nenhum registro encontrado.")
+                                  //.SearchPanel(s => s.Visible(true).Width(280))
+                                  //.FilterRow(f => f.Visible(true))
+                                  //.Paging(p => p.PageSize(10))
+                                  .Columns(columns =>
+                                  {
+                                  columns.Add().DataField("Idpessoa").Visible(false);
+                                  columns.Add().DataField("Datapagamento").Caption("DATA PGTO.").DataType(GridColumnDataType.Date).Width(100);
+                                  columns.Add().Caption("NOME")
+                                          .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text(new JS("data.Pessoa")).OnClick("function (e) { editMovimentacaoButtonClick(data, 'Pagamento') }")</text>).Width(170);
+                                      columns.Add().DataField("Categoria").Caption("CATEGORIA").Width(170);
+                                      columns.Add().DataField("Descricao").Caption("DESCRIÇÃO").Width(370);
+                                      columns.Add().DataField("Valorpago").Caption("VALOR").Width(100).Format("0##.##00").DataType(GridColumnDataType.Number);
+                                  })
+                                      .Height(200)
+                                      .Summary(s => s.TotalItems(t => t.Add().Column("Valorpago").SummaryType(SummaryType.Sum).ValueFormat("0##.##00")).Texts(t => t.Sum("{0}"))))
+                    </div>
+                </div>
+
+
+
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-3 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <vc:dashboard-resumo-saldo-disponibilidade-soma max-priority="3" is-done="false">
+                                </vc:dashboard-resumo-saldo-disponibilidade-soma>
+                                @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.Dashboard.SaldoDisponibilidade>()
+                                      .Height(120)
+                                      .Width(270)
+                                      .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterSaldoDisponibilidade"))
+                                      .Columns(c =>
+                                      {
+                                          c.Add().DataField("Conta").Width(150);
+                                          c.Add().DataField("Saldo").Width(120).Alignment(HorizontalAlignment.Right);
+                                      })
+                                      .ShowColumnHeaders(false)
+                                      .ShowColumnLines(false)
+                                      .ShowRowLines(true)
+                                      .Paging(p => p.Enabled(false)))
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-12 ">
+                <div class="card">
+
+                    <div style="font-family:Assistant; font-weight:bold;text-align:center; color:black; font-size:14px; margin-top:5px;">Resultado Financeiro Previsto para o Mês</div>
+                    <div style="font-family:Assistant; text-align:center; position:center; margin-left:22px;" >
+                        @(Html.DevExtreme().DateBox()
+                                .Type(DateBoxType.Date)
+                                .DisplayFormat(Format.Month)
+                                .Value(DateTime.Now)
+                                .MaxZoomLevel(CalendarZoomLevel.Year)
+                                .Width(250)
+                                .Height(35)
+                                )
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <vc:dashboard-resumo-resultado-previsto-para-mes-receber max-priority="3" is-done="false">
+                                </vc:dashboard-resumo-resultado-previsto-para-mes-receber>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <vc:dashboard-resumo-resultado-previsto-para-mes-pagar max-priority="3" is-done="false">
+                                </vc:dashboard-resumo-resultado-previsto-para-mes-pagar>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <vc:dashboard-resumo-resultado-previsto-para-mes-resultado max-priority="3" is-done="false">
+                                </vc:dashboard-resumo-resultado-previsto-para-mes-resultado>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

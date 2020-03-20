@@ -1,0 +1,26 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Dashboard.ResultadoFinanceiro;
+
+<small class="text-justify" style="color:purple;font-size:12px;"> Resultado Financeiro Líquido</small>
+
+@(Html.DevExtreme().PieChart()
+   .Size(s => s.Height(100).Width(100))
+    .Palette(new[] { "#bebebe", "#ffc90c" })
+    .Type(PieChartType.Doughnut)
+    .InnerRadius(0.9)
+    .Legend(l => l.Visible(false))
+    .Tooltip(t => t
+        .Enabled(true)
+        .Format(Format.Currency))
+    .Series(s => s
+        .Add()
+        .ArgumentField("Descricao")
+        .ValueField("Valor"))
+    
+    .DataSource(Model.Resultados)
+    
+    )
+<h5 class="text-center text-dark">
+    <i class="dx-icon-money text-megna"></i>
+    @(Model.SaldoFormatado)
+</h5>
+

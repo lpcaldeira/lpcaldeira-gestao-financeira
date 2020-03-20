@@ -1,0 +1,357 @@
+﻿@model Gomi.Infraestrutura.Models.Pessoas.Pessoa
+
+<script type="text/javascript">
+
+    function excluirSocioClick() {
+        var socio = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirSocio',
+            type: 'POST',
+            data: socio,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-socio').modal('hide');
+                $("#listaSocios").html(viewComponent);
+            }
+        });
+    }    
+</script>
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarSocio" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridSocios">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idSocio" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorSocio" })
+
+    <div id="add-socio" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloSocio"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("socioValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                              .RadioGroupFor(x => x.TipoPessoa)
+                                              .ID("socioTipoPessoa")
+                                              .Items(Model.TiposPessoa)
+                                              .OnValueChanged("radioGroupTipoPessoaSocio_valueChanged")
+                                              .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>CNPJ / CPF</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cnpj)
+                                              .ID("socioCnpj")
+                                              .InputAttr("id", "socioCnpjInput")
+                                              .Mask("00.000.000/0000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Cpf)
+                                              .ID("socioCpf")
+                                              .InputAttr("id", "socioCpfInput")
+                                              .Mask("000.000.000-00")
+                                              .Visible(true)
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Nome</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Nome)
+                                                      .ID("socioNome")
+                                                      .InputAttr("id", "socioNomeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Email</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Email)
+                                                      .ID("socioEmail")
+                                                      .InputAttr("id", "socioEmailInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Telefone</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Telefone)
+                                                      .ID("socioTelefone")
+                                                      .InputAttr("id", "socioTelefoneInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Celular</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Celular)
+                                                      .ID("socioCelular")
+                                                      .InputAttr("id", "socioCelularInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span id="socioPessoaContatoTitulo">Pessoa de contato</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.PessoaContato)
+                                                      .ID("socioPessoaContato")
+                                                      .InputAttr("id", "socioPessoaContatoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row" id="socioDadosJuridicos">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Razão social</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.RazaoSocial)
+                                                      .ID("socioRazaoSocial")
+                                                      .InputAttr("id", "socioRazaoSocialInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição municipal</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Im)
+                                                      .ID("socioIm")
+                                                      .InputAttr("id", "socioRazaoImInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Inscrição estadual</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Ie)
+                                                      .ID("socioIe")
+                                                      .InputAttr("id", "socioIeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <h3>Endereço</h3>
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>CEP</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cep)
+                                                      .Mask("00000-000")
+                                                      .ID("socioCep")
+                                                      .InputAttr("id", "socioCepInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Endereço</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Endereco)
+                                                      .ID("socioEndereco")
+                                                      .InputAttr("id", "socioEnderecoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Número</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Numero)
+                                                      .ID("socioNumero")
+                                                      .InputAttr("id", "socioNumeroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Complemento</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Complemento)
+                                                      .ID("socioComplemento")
+                                                      .InputAttr("id", "socioComplementoInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Bairro</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Bairro)
+                                                      .ID("socioBairro")
+                                                      .InputAttr("id", "socioBairroInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-4 m-b-20">
+                                        <span>Cidade</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Cidade)
+                                                      .ID("socioCidade")
+                                                      .InputAttr("id", "socioCidadeInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>UF</span>
+                                        @(Html.DevExtreme()
+                                                      .SelectBoxFor(x => x.Uf)
+                                                      .Placeholder("")
+                                                      .DataSource(Model.ListaUFs)
+                                                      .ID("socioUf")
+                                                      .InputAttr("id", "socioUfInput")
+                                                      .DisplayExpr("Sigla")
+                                                      .ValueExpr("Sigla"))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>País</span>
+                                        @(Html.DevExtreme()
+                                                      .TextBoxFor(x => x.Pais)
+                                                      .ID("socioPais")
+                                                      .InputAttr("id", "socioPaisInput")
+                                                      .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("socioButtonSalvar")
+                                  .UseSubmitBehavior(true)
+                                  .ValidationGroup("socioValidationGroup")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Salvar"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("socioButtonEditar")
+                                  .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                                  .Text("Editar")
+                                  .OnClick("editarSocioClick"))
+                    @(Html.DevExtreme()
+                                  .Button()
+                                  .ID("socioButtonExcluir")
+                                  .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                                  .Text("Excluir")
+                                  .OnClick("excluirSocioClick"))
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function(viewComponent) {
+        $('#add-socio').modal('hide');
+        $("#listaSocios").html(viewComponent);
+    };
+
+    function verificarCampoDocumentoSocio(paramentroTipoPessoa) {
+
+        var tipoPessoa;
+        if (paramentroTipoPessoa === null)
+            tipoPessoa = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.TipoPessoa));
+        else
+            tipoPessoa = String(paramentroTipoPessoa);
+
+        if (tipoPessoa.toLowerCase().indexOf("j") !== -1) {
+            document.getElementById("socioCpf").style.display = 'none';
+            document.getElementById("socioCnpj").style.display = 'block';
+            document.getElementById("socioPessoaContato").style.display = 'block';
+            document.getElementById("socioPessoaContatoTitulo").style.display = 'block';
+            document.getElementById("socioDadosJuridicos").style.display = 'flex';
+        } else {
+            document.getElementById("socioCnpj").style.display = 'none';
+            document.getElementById("socioPessoaContato").style.display = 'none';
+            document.getElementById("socioPessoaContatoTitulo").style.display = 'none';
+            document.getElementById("socioDadosJuridicos").style.display = 'none';
+            document.getElementById("socioCpf").style.display = 'block';
+        }
+    }
+
+    $("#socioCnpjInput").keyup(function(event) {
+        var cnpj = $("#socioCnpjInput").val().replace(/\D+/g, '');
+        if (cnpj.length === 14) {
+            $.ajax({
+                url: 'https://www.receitaws.com.br/v1/cnpj/' + cnpj,
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    if (resposta.status !== "ERROR") {
+                        $("#socioNome").dxTextBox("instance").option("value", resposta.fantasia);
+                        $("#socioEmail").dxTextBox("instance").option("value", resposta.email);
+                        $("#socioTelefone").dxTextBox("instance").option("value", resposta.telefone);
+                        $("#socioRazaoSocial").dxTextBox("instance").option("value", resposta.nome);
+                        $("#socioCep").dxTextBox("instance").option("value", resposta.cep);
+                        $("#socioEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                        $("#socioNumero").dxTextBox("instance").option("value", resposta.numero);
+                        $("#socioBairro").dxTextBox("instance").option("value", resposta.bairro);
+                        $("#socioCidade").dxTextBox("instance").option("value", resposta.municipio);
+                        $("#socioUf").dxSelectBox("instance").option("value", resposta.uf);
+                        $("#socioPais").dxTextBox("instance").option("value", "Brasil");
+                    }
+                }
+            });
+        }
+    });
+
+    $("#socioCepInput").keyup(function(event) {
+        var cep = $("#socioCepInput").val().replace(/\D+/g, '');
+        if (cep.length === 8 ) {
+            $.ajax({
+                url: 'https://viacep.com.br/ws/' + cep +'/json/',
+                type: 'GET',
+                dataType: 'jsonp',
+                success: function(resposta){
+                    $("#socioCep").dxTextBox("instance").option("value", resposta.cep);
+                    $("#socioEndereco").dxTextBox("instance").option("value", resposta.logradouro);
+                    $("#socioNumero").dxTextBox("instance").option("value", "");
+                    $("#socioBairro").dxTextBox("instance").option("value", resposta.bairro);
+                    $("#socioCidade").dxTextBox("instance").option("value", resposta.localidade);
+                    $("#socioUf").dxSelectBox("instance").option("value", resposta.uf);
+                    $("#socioPais").dxTextBox("instance").option("value", "Brasil");
+                }
+            });
+        }
+    });
+
+    function radioGroupTipoPessoaSocio_valueChanged(e) {
+        verificarCampoDocumentoSocio(e.value);
+    }
+
+    function habilitarCamposSocio(permiteEditar) {
+        $("#socioTipoPessoa").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#socioCnpj").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioCpf").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioNome").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioEmail").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioTelefone").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioCelular").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioPessoaContato").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioRazaoSocial").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioIm").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioIe").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioCep").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioEndereco").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioNumero").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioBairro").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioCidade").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioUf").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#socioPais").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#socioButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#socioButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#socioButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+    }
+
+    function editarSocioClick() {
+        habilitarCamposSocio(true);
+    }
+
+    $(document).ready(function () {
+        verificarCampoDocumentoSocio(null);
+
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposSocio(registroNovo);
+    });
+
+</script>

@@ -1,0 +1,388 @@
+﻿<script type="text/javascript">
+
+    function editPessoaSocioButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarSocio',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaSocio").html(viewComponent);
+                $('#add-socio').modal('show');
+            }
+        });
+    }
+
+    function insertPessoaSocioButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirSocio',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaSocio").html(viewComponent);
+                $('#add-socio').modal('show');
+            }
+        });
+    }
+
+    function toolbar_pessoa_socio_preparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+                hint: "Adicionar sócio",
+                text: "Novo sócio",
+                icon: "add",
+                elementAttr: {
+                    "class": "btn btn-success"
+                },
+                onClick: function (b) {
+                    insertPessoaSocioButtonClick();
+                }
+            }
+        }/*, {
+                location: "before",
+                widget: "dxButton",
+                options: {
+                    hint: "Importar sócios",
+                    text: "Importar...",
+                    elementAttr: {
+                        "class": "btn btn-default waves-effect"
+                    },
+                    onClick: function (b) {
+                        alert("Sócios importados com sucesso!");
+                    }
+                }
+            }*/);
+    }
+
+</script>
+
+
+<div class="row">
+    <div class="col-lg-5 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h6 class="card-title" style="font-family:Assistant; color:black; font-size:14px;">RELAÇÃO DE SÓCIOS- A PAGAR</h6>
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Pessoas.ListaPessoas>()
+                .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterListaSociosPagar").Key("Id"))
+                .ID("gridSociosPrincipalPagar")
+                 .TwoWayBindingEnabled(true)
+                  .ShowColumnLines(false)
+                  .ShowRowLines(true)
+                  .ShowBorders(true)
+                  .RowAlternationEnabled(false)
+                  .LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+                  .NoDataText("Nenhum registro encontrado.")
+                  .Paging(p => p.Enabled(false))
+                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                  .FocusStateEnabled(true)
+                  .SearchPanel(searchPanel => searchPanel
+                      .Visible(true)
+                      .Width(300)
+                      .Placeholder("Pesquisar...")
+                      .HighlightCaseSensitive(true)
+                      .HighlightSearchText(true)
+                      .SearchVisibleColumnsOnly(false))
+                  //    .Scrolling(d => d.ShowScrollbar(ShowScrollbarMode.Always).UseNative(true))
+                  .OnToolbarPreparing("toolbar_pessoa_socio_preparing")
+                  .Selection(s => s.Mode(SelectionMode.Single))
+
+                .Columns(columns =>
+                {
+                columns.AddFor(m => m.Nome).Caption("NOME").Width(270);
+                columns.Add().CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Icon("edit").Hint("Editar").OnClick("function (e) { editPessoaSocioButtonClick(data) }")</text>).Width(20);
+                    columns.AddFor(m => m.Emaberto).Caption("EM ABERTO").Width(80).Format("0#.##00");
+                    columns.AddFor(m => m.Vencido).Caption("VENCIDO").Width(80).Format("0#.##00");
+                    columns.AddFor(m => m.Cpf).Visible(false);
+                    columns.AddFor(m => m.Cnpj).Visible(false);
+                    columns.AddFor(m => m.Razaosocial).Visible(false);
+
+                }).OnRowClick("ObterSociosPagar")
+                        .NoDataText("Nenhum Registro Encontrado.")
+                        .Width(490)
+                        .Height(175)
+                                .Summary(s => s.Texts(t => t.Sum(" {0}")).TotalItems(i =>
+                    {
+                        i.AddFor(m => m.Emaberto).SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                        i.AddFor(m => m.Vencido).SummaryType(SummaryType.Sum).ValueFormat("0#.##00");
+                    }
+                        ))
+
+                        )
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <h6 class="card-title" style="font-family:Assistant; color:black; font-size:14px;">RELAÇÃO DE SÓCIOS- A RECEBER</h6>
+                        @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Pessoas.ListaPessoas>()
+                .DataSource(d => d.Mvc().Controller("Dashboard").LoadAction("ObterListaSociosReceber").Key("Id"))
+                .ID("gridSociosPrincipalReceber")
+                 .TwoWayBindingEnabled(true)
+                  .ShowColumnLines(false)
+                  .ShowRowLines(true)
+                  .ShowBorders(true)
+                  .RowAlternationEnabled(false)
+                  .LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+                  .NoDataText("Nenhum registro encontrado.")
+                  .Paging(p => p.Enabled(false))
+                  .Scrolling(s => s.Mode(GridScrollingMode.Infinite))
+                  .FocusStateEnabled(true)
+                  .SearchPanel(searchPanel => searchPanel
+                      .Visible(true)
+                      .Width(300)
+                      .Placeholder("Pesquisar...")
+                      .HighlightCaseSensitive(true)
+                      .HighlightSearchText(true)
+                      .SearchVisibleColumnsOnly(false))
+                  // .Scrolling(d => d.ShowScrollbar(ShowScrollbarMode.Always).UseNative(true))
+
+                  .Selection(s => s.Mode(SelectionMode.Single))
+
+                .Columns(columns =>
+                {
+                columns.AddFor(m => m.Nome).Width("150").Caption("NOME").Width(270);
+                columns.Add().CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Icon("edit").Hint("Editar").OnClick("function (e) { editPessoaSocioButtonClick(data) }")</text>).Width(20);
+                    columns.AddFor(m => m.Emaberto).Caption("EM ABERTO").Width(80).Format("0#.##00");
+                    columns.AddFor(m => m.Vencido).Caption("VENCIDO").Width(80).Format("0#.##00");
+                    columns.AddFor(m => m.Cpf).Visible(false);
+                    columns.AddFor(m => m.Cnpj).Visible(false);
+                    columns.AddFor(m => m.Razaosocial).Visible(false);
+
+                }).OnRowClick("ObterSociosReceber")
+                        .NoDataText("Nenhum Registro Encontrado.")
+                                .Width(490)
+                        .Height(175)
+                                .Summary(s => s.Texts(t => t.Sum(" {0}")).TotalItems(i =>
+                                {
+                                    i.AddFor(m => m.Emaberto).SummaryType(SummaryType.Sum);
+                                    i.AddFor(m => m.Vencido).SummaryType(SummaryType.Sum);
+                                }
+                        ))
+
+                        )
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7 ">
+        <div class="row">
+            <div class="col-lg-12 ">
+
+                <div class="row">
+                    <div class="col-lg-12">
+
+                        <div id="ListSociosContainer">
+                            @(Html.DevExtreme().List()
+                                    .ID("ListSocios")
+                                    .Height(100)
+                                    .NoDataText("Nenhuma Pessoa Selecionada")
+                                    .SelectionMode(ListSelectionMode.None)
+                                    .ItemTemplate(@<text>
+
+                                    <div>
+                                        <h4 style="font-family:Assistant; font-weight:bold;color:black;margin:0px;"><%= Nome %></h4>
+                                        <p style="font-family:Assistant; margin:0;">
+                                            <span><%= Documento %></span>
+                                        </p>
+                                        <p style="font-family:Assistant; margin:0;">
+                                            <span><%= Endereco %> </span>
+                                            <span><%= Numero %>&emsp; </span>
+                                            <span><%= Bairro %>&emsp; </span>
+                                            <span><%= Cidade %></span>
+                                            <span><%= Uf %></span>
+                                        </p>
+                                        <p style="font-family:Assistant; margin:0;">
+                                            <span> <%= Telefone %>&emsp;    </span>
+                                            <span> <%= Pessoacontato %>&emsp;    </span>
+                                            <span> <%= Email %></span>
+                                        </p>
+                                    </div></text>))
+                        </div>
+
+
+                        <div id="gridSociosDetalheContainer">
+                            <h6 style="font-family:Assistant; color:black;font-weight:bold;margin-left:0px;margin-top:5px; margin-bottom:0px;">DETALHAMENTO DAS MOVIMENTAÇÕES EM ABERTO:</h6>
+                            @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Pessoas.ListaPessoasDetalhado>()
+                                        .ID("gridSociosDetalhe")
+                                        .ColumnAutoWidth(true)
+                                        .ShowBorders(false)
+                                        .TwoWayBindingEnabled(true)
+                                        .ShowColumnLines(false)
+                                        .ShowRowLines(true)
+                                        .RowAlternationEnabled(false)
+                                        .NoDataText("Nenhum registro encontrado.")
+                                        .Paging(p => p.Enabled(false))
+                                        .HeaderFilter(h => h.Visible(true))
+                                        .Selection(s => s.Mode(SelectionMode.Single))
+                                        .Scrolling(d => d.ShowScrollbar(ShowScrollbarMode.Always))
+                                       .Columns(columns =>
+                                        {
+                                            columns.AddFor(m => m.Vencimento).Width(120).FixedPosition(HorizontalEdge.Right);
+                                            columns.AddFor(m => m.Categoria).Width(190);
+                                            columns.AddFor(m => m.Descricao).Width(250);
+                                            columns.AddFor(m => m.Valor).AllowFiltering(false).Width(140).FixedPosition(HorizontalEdge.Right).Format("0#.##00");
+                                            columns.Add().Width(15);
+                                        })
+                                        .Summary(s => s.TotalItems(i => i.Add().Column("Valor").SummaryType(SummaryType.Sum).ValueFormat("0#.##00")).Texts(t => t.Sum("Total = {0}")))
+                                        .Height(170)
+                                        .Width(720)
+                            )
+                        </div>
+
+                        <div id="chartSociosDetalheContainer">
+                            <h6 style="font-family:Assistant; color:black; font-size:14px;font-weight:bold;margin-left:0px;">HISTÓRICO DE MOVIMENTAÇÕES:</h6>
+                            @(Html.DevExtreme().Chart()
+                                    .ID("chartSociosDashbboard")
+                                    //.CommonAxisSettings(c => c.DiscreteAxisDivisionMode(DiscreteAxisDivisionMode.BetweenLabels).Grid(g => g.Visible(false)).Label(l => l.DisplayMode(ChartLabelDisplayMode.Standard).Font(f => f.Size(8))))
+                                    .ArgumentAxis(a => a.Visible(true).ArgumentType(ChartDataType.DateTime).TickInterval(t => t.Months(1)).Tick(t => t.Visible(false)).Label(l => l.Format("MMM")).Position(Position.Bottom))
+                                    .CommonSeriesSettings(s => s
+                                        .ArgumentField("Vencimento")
+                                        .Type(SeriesType.Bar)
+                                        .HoverMode(ChartSeriesHoverMode.AllArgumentPoints)
+                                        .SelectionMode(ChartSeriesSelectionMode.AllArgumentPoints)
+                                        .Label(l => l
+                                            .Visible(false)
+                                            .Format(f => f
+                                                .Type(Format.FixedPoint)
+                                            //           .Precision(0)
+                                            )
+                                        )
+                                    )
+                                    .Series(s =>
+                                    {
+
+                                        s.Add().ValueField("Valor").Name("Vencimentos").Color("#99d6ff").Label(l => l.Format(Format.Currency));
+                                        s.Add().ValueField("Recebido").Name("Recebido/Pago").Color("#66ffc2");
+                                        s.Add().ValueField("Vencido").Name("Vencido").Color("#ff471a").Type(SeriesType.Line).HoverMode(ChartSeriesHoverMode.None).Point(p => p.Visible(false));
+                                    })
+
+                                    .Tooltip(t => t.Enabled(true))
+                                    .Legend(l => l
+                                        .Visible(true)
+                                        .VerticalAlignment(VerticalEdge.Top)
+                                        .HorizontalAlignment(HorizontalAlignment.Center)
+                                        .Font(f => f.Size(8))
+                                    )
+                                    .Size(s => s.Height(170).Width(650))
+                            )
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+            function ObterSociosPagar(e) {
+            var parametro = JSON.stringify(e.data);
+            var dataType = 'application/json; charset=utf-8';
+            $.ajax({
+                url: '@Url.Action("ObterHistoricoSociosMovimentacaoPagar", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+
+                    var chartSociosDetalhe = $("#chartSociosDashbboard").dxChart("instance");
+                    chartSociosDetalhe.option("dataSource", resultado);
+
+                }
+            });
+                $.ajax({
+                url: '@Url.Action("ObterSociosInformacao", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+
+                    var List = $("#ListSocios").dxList ("instance");
+                    List.option("dataSource", resultado);
+
+
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("ObterSociosDetalhadoPagar", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+                    var gridSociosDetalhe = $("#gridSociosDetalhe").dxDataGrid("instance");
+
+
+                    gridSociosDetalhe.option("dataSource", resultado);
+
+
+                }
+            });
+        }
+
+</script>
+
+
+<script type="text/javascript">
+
+            function ObterSociosReceber(e) {
+            var parametro = JSON.stringify(e.data);
+            var dataType = 'application/json; charset=utf-8';
+            $.ajax({
+                url: '@Url.Action("ObterHistoricoSociosMovimentacaoReceber", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+
+                    var chartSociosDetalhe = $("#chartSociosDashbboard").dxChart("instance");
+                    chartSociosDetalhe.option("dataSource", resultado);
+
+                }
+            });
+                $.ajax({
+                url: '@Url.Action("ObterSociosInformacao", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+
+                    var List = $("#ListSocios").dxList ("instance");
+                    List.option("dataSource", resultado);
+
+
+                }
+            });
+            $.ajax({
+                url: '@Url.Action("ObterSociosDetalhadoReceber", "Dashboard")',
+                type: 'POST',
+                data: parametro,
+                contentType: dataType,
+                dataType: "json",
+                success: function (resultado) {
+                    var gridSociosDetalhe = $("#gridSociosDetalhe").dxDataGrid("instance");
+
+
+                    gridSociosDetalhe.option("dataSource", resultado);
+
+
+                }
+            });
+        }
+
+</script>

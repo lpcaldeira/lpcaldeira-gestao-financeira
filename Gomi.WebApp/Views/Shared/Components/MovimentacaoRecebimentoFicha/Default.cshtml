@@ -1,0 +1,438 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Receber
+
+<script type="text/javascript">
+
+    function excluirRecebimentoClick() {
+        var idRecebimento = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.Id));
+        var result = DevExpress.ui.dialog.confirm("Deseja excluir o registro?", "Atenção");
+        result.done(function (confirmou) {
+            if (confirmou) {
+                $.ajax({
+                    url: '/Movimentacoes/ExcluirRecebimento?id=' + parseInt(idRecebimento),
+                    type: 'POST',
+                    processData: false,
+                    success: function (data) {
+                        $('#addRecebimento').modal('hide');
+                        $("#contasrecebidas").dxDataGrid("instance").refresh();
+                        $("#contasareceber").dxDataGrid("instance").refresh();
+                    }
+                });
+            }
+        });
+    }
+
+    function salvarPessoaCadastroRapidoReceber() {
+        var nomePessoa = $("#clienteReceberNome").dxTextBox('instance').option('value');
+        var tipoTransacionador = $("#recebimentoTransacionadores").dxSelectBox('instance').option('value');
+        $.ajax({
+            url: '/CadastrosConfiguracoes/SalvarPessoaCadastroRapido?nome=' + nomePessoa + '&transacionador=' + tipoTransacionador,
+            type: 'POST',
+            processData: false,
+            success: function (data) {
+                $("#recebimentoNomePessoa").dxSelectBox('instance').option('value', data.nome);
+                fecharCadastroRapidoReceber();
+            }
+        });
+    }
+
+    function adicionarPessoaCadastroRapido(args) {
+        $("#cadastroRapidoReceber").css('display', 'block');
+        $("#recebimentoNomePessoa").dxSelectBox('instance')._popup.option('visible', false);
+        var e = args.jQueryEvent;
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    function fecharCadastroRapidoReceber() {
+        $('#cadastroRapidoReceber').css('display', 'none');
+    }
+
+</script>
+
+<form asp-controller="Movimentacoes" asp-action="SalvarRecebimento" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridRecebimentos">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idRecebimento" })
+    @Html.HiddenFor(model => model.IdPessoa, new { @id = "idPessoaRecebimento" })
+    @Html.HiddenFor(model => model.IdCentroCusto, new { @id = "idCentroCustoRecebimento" })
+    @Html.HiddenFor(model => model.IdPlanoConta, new { @id = "idPlanoContaRecebimento" })
+    @Html.HiddenFor(model => model.IdContaRecebimento, new { @id = "idContaRecebimentoRecebimento" })
+    @Html.HiddenFor(model => model.IdEmpresa, new { @id = "idEmpresaRecebimento" })
+    @Html.HiddenFor(model => model.IdCaixa, new { @id = "idCaixaRecebimento" })
+    @Html.HiddenFor(model => model.Transacionador, new { @id = "transacionadorRecebimento" })
+    @Html.HiddenFor(model => model.RegistroNovo, new { @id = "registroNovoRecebimento" })
+    @Html.HiddenFor(model => model.RegistroAReceber, new { @id = "registroAReceberRecebimento" })
+
+    <div id="addRecebimento" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloRecebimento"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("receberValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Emissão</span>
+                                        @(Html.DevExtreme()
+                                              .DateBoxFor(x => x.Emissao)
+                                              .ID("recebimentoEmissao")
+                                              .ElementAttr("style", "width: 100%;")
+                                              .InputAttr("id", "recebimentoEmissaoInput"))
+                                    </div>
+                                    <div class="col-md-2 m-b-20">
+                                        <span>Vencimento</span>
+                                        @(Html.DevExtreme()
+                                              .DateBoxFor(x => x.Vencimento)
+                                              .DisplayFormat("dd/MM/yyyy")
+                                              .ID("recebimentoVencimento")
+                                              .ElementAttr("style", "width: 100%;")
+                                              .InputAttr("id", "recebimentoVencimentoInput"))
+                                    </div>
+                                    <div class="col-md-5 m-b-20">
+                                        <span>Pessoa</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.NomePessoa)
+                                              .ID("recebimentoNomePessoa")
+                                              .InputAttr("id", "recebimentoNomePessoaInput")
+                                              .DataSource(d => d.Mvc()
+                                                  .Controller("Movimentacoes")
+                                                  .LoadAction("GetPessoasRecebimento")
+                                                  .Key("Nome"))
+                                              .DisplayExpr("Nome")
+                                              .ValueExpr("Nome")
+                                              .FieldTemplate(@<text>
+                                                  <div class="containerSelect">
+                                                      @(Html.DevExtreme()
+                                                            .TextBox()
+                                                            .Value(new JS("obj && Nome")))
+                                                      <div class="containerAddCadastroRapido">
+                                                          @(Html.DevExtreme()
+                                                                .Button()
+                                                                .ID("recebimentoButtonAddPessoa")
+                                                                .OnClick("adicionarPessoaCadastroRapido")
+                                                                .Icon("add")
+                                                                .Text(""))
+                                                      </div>
+                                                  </div>
+                                              </text>)
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .ItemTemplate(@<text><div><%= Nome %> - <%= Transacionador %></div></text>)
+                                              .OnSelectionChanged("selecionarRecebimentoPessoaChanged"))
+                                        
+                                        <div id="cadastroRapidoReceber" class="cadastroRapido hide">
+                                            <a class="cancelar" href="#" onclick="fecharCadastroRapidoReceber()">
+                                                <i class="dx-icon-close"></i>
+                                            </a>
+                                            <div class="row">
+                                                <div class="col-md-5">
+                                                    @(Html.DevExtreme()
+                                                          .TextBox()
+                                                          .ID("clienteReceberNome")
+                                                          .Placeholder("Nome")
+                                                          .TabIndex(2)
+                                                          .InputAttr("id", "clienteReceberNomeInput")
+                                                          .Mode(TextBoxMode.Text))
+                                                </div>
+                                                <div class="col-md-5">
+                                                    @(Html.DevExtreme().SelectBox()
+                                                          .ID("recebimentoTransacionadores")
+                                                          .InputAttr("id", "recebimentoTransacionadoresInput")
+                                                          .DataSource(Model.TiposTransacionadores)
+                                                          .SearchEnabled(true)
+                                                          .SearchMode(DropDownSearchMode.StartsWith))
+                                                </div>
+                                                <div class="col-md-2">
+                                                    @(Html.DevExtreme()
+                                                          .Button()
+                                                          .ID("recebimentoButtonCriarPessoa")
+                                                          .OnClick("salvarPessoaCadastroRapidoReceber")
+                                                          .ElementAttr(new
+                                                          {
+                                                              @class = "btn btn-info text-uppercase waves-effect waves-light",
+                                                          })
+                                                          .Text("Criar"))
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Valor</span>
+                                        @(Html.DevExtreme()
+                                              .NumberBoxFor(x => x.Valor)
+                                              .Format("#,##0.00")
+                                              .ID("recebimentoValor")
+                                              .InputAttr(new
+                                              {
+                                                  @id = "recebimentoValorInput",
+                                                  @onClick = "this.select();"
+                                              }))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Categoria</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.DescricaoPlanoConta)
+                                              .ID("recebimentoPlanoConta")
+                                              .InputAttr("id", "recebimentoPlanoContaInput")
+                                              .DataSource(Model.PlanosContas)
+                                              .DisplayExpr("Categoria")
+                                              .ValueExpr("Categoria")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarRecebimentoPlanoContaChanged"))
+                                    </div>
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Descrição</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Descricao)
+                                              .ID("recebimentoDescricao")
+                                              .InputAttr("id", "recebimentoDescricaoInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                    <div class="col-md-3 m-b-20">
+                                        <span>Centro Custo</span>
+                                        @(Html.DevExtreme().SelectBoxFor(x => x.DescricaoCentroCusto)
+                                              .ID("recebimentoCentroCusto")
+                                              .InputAttr("id", "recebimentoCentroCustoInput")
+                                              .DataSource(Model.CentrosCustos)
+                                              .DisplayExpr("Descricao")
+                                              .ValueExpr("Descricao")
+                                              .SearchEnabled(true)
+                                              .SearchMode(DropDownSearchMode.StartsWith)
+                                              .OnSelectionChanged("selecionarRecebimentoCentroCustoChanged"))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("recebimentoButtonCobrar")
+                          .ValidationGroup("receberValidationGroup")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Salvar e receber")
+                          .OnClick("salvarRecebimentoECobrarClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("recebimentoButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("receberValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("recebimentoButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarRecebimentoClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("recebimentoButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirRecebimentoClick"))
+                </div>
+
+                @(Html.DevExtreme().TabPanel()
+                              .ID("tabpanelReceberPagamento")
+                              .ElementAttr("style", "padding: 5px;")
+                              .Items(i =>
+                              {
+                                  i.Add().TabTemplate(@<text><b><%= "Realizar Recebimento" %></b></text>)
+                                         .Template(@<text>
+                                             <br />
+                                             @using (Html.DevExtreme().ValidationGroup())
+                                             {
+                                                 <div class="row" style="padding-left: 10px;">
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Conta Recebimento</span>
+                                                         @(Html.DevExtreme().SelectBoxFor(x => x.NomeContaRecebimento)
+                                                                       .ID("recebimentoContaRecebimento")
+                                                                       .InputAttr("id", "recebimentoContaRecebimentoInput")
+                                                                       .DataSource(d => d.Mvc().Controller("Movimentacoes").LoadAction("GetContas").Key("Nome"))
+                                                                       .DisplayExpr("Nome")
+                                                                       .ValueExpr("Nome")
+                                                                       .SearchEnabled(true)
+                                                                       .SearchMode(DropDownSearchMode.StartsWith)
+                                                                       .OnSelectionChanged("selecionarContaRecebimentoChanged"))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Data de Recebimento</span>
+                                                         @(Html.DevExtreme()
+                                                                       .DateBoxFor(x => x.DataRecebimento)
+                                                                       .DisplayFormat("dd/MM/yyyy")
+                                                                       .ID("recebimentoDataRecebimento")
+                                                                       .InputAttr("id", "recebimentoDataRecebimentoInput"))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         <span>Valor Recebido</span>
+                                                         @(Html.DevExtreme()
+                                                                       .NumberBoxFor(x => x.ValorRecebido)
+                                                                       .Format("#,##0.00")
+                                                                       .ID("recebimentoValorRecebido")
+                                                                       .InputAttr(new
+                                                                       {
+                                                                           @id = "recebimentoValorRecebidoInput",
+                                                                           @onClick = "this.select();"
+                                                                       }))
+                                                     </div>
+                                                     <div class="col-md-3 m-b-20">
+                                                         @(Html.DevExtreme()
+                                                                       .Button()
+                                                                       .ID("recebimentoButtonReceber")
+                                                                       .UseSubmitBehavior(true)
+                                                                       .Option("style", "")
+                                                                       .ElementAttr(new
+                                                                       {
+                                                                           @class = "btn btn-info text-uppercase waves-effect waves-light",
+                                                                           @style = "margin-top: 20px;"
+                                                                       })
+                                                                       .Text("Receber"))
+                                                     </div>
+                                                 </div>
+                                             }
+                                         </text>);
+                              }))
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+
+    var onSuccess = function (viewComponent) {
+        $('#addRecebimento').modal('hide');
+        $("#contasrecebidas").dxDataGrid("instance").refresh();
+        $("#contasareceber").dxDataGrid("instance").refresh();
+    };
+
+    function selecionarRecebimentoPessoaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idPessoaRecebimento').val(valor);
+            }
+
+            if (key === 'IdTransacionador') {
+                $('#idTransacionadorRecebimento').val(valor);
+            }
+        });
+    }
+
+    function selecionarRecebimentoContaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaRecebimento').val(valor);
+            }
+        });
+    }
+
+    function selecionarContaRecebimentoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idContaRecebimentoRecebimento').val(valor);
+            }
+        });
+    }
+
+    function selecionarRecebimentoPlanoContaChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idPlanoContaRecebimento').val(valor);
+            }
+        });
+    }
+
+    function selecionarRecebimentoCentroCustoChanged(data) {
+        Object.keys(data.selectedItem).forEach(function (key) {
+            var valor = data.selectedItem[key];
+            if (key === 'Id') {
+                $('#idCentroCustoRecebimento').val(valor);
+            }
+        });
+    }
+
+    function setarValoresDeCobrancaRecebimento() {
+        $("#recebimentoDataRecebimento").dxDateBox("instance").option("value", new Date());
+        var valorAReceber = parseFloat($("#recebimentoValorInput").val().replace('.', ''));
+        $("#recebimentoValorRecebido").dxNumberBox("instance").option("value", valorAReceber);
+    }
+
+    function salvarRecebimentoECobrarClick(params) {
+        var validou = params.validationGroup.validate();
+        if (validou.isValid) {
+            $("#tabpanelReceberPagamento").dxTabPanel("instance").option("visible", true);
+            setarValoresDeCobrancaRecebimento();
+        }
+    }
+
+    function inicializarCamposRecebimento(registroEmManutencao) {
+
+        var registroAReceber = $("#registroAReceberRecebimento").val() === "True";
+
+        $("#recebimentoEmissao").dxDateBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoVencimento").dxDateBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoNomePessoa").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoValor").dxNumberBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoValor").dxNumberBox("instance").option("rtlEnabled", true);
+        $("#recebimentoPlanoConta").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoDescricao").dxTextBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoCentroCusto").dxSelectBox("instance").option("disabled", !registroEmManutencao);
+        $("#recebimentoButtonCobrar").dxButton("instance").option("visible", registroEmManutencao && registroAReceber);
+        $("#recebimentoButtonSalvar").dxButton("instance").option("visible", registroEmManutencao);
+        $("#recebimentoButtonEditar").dxButton("instance").option("visible", !registroEmManutencao);
+        $("#recebimentoButtonExcluir").dxButton("instance").option("visible", !registroEmManutencao);
+        $("#tabpanelReceberPagamento").dxTabPanel("instance").option("visible", !registroEmManutencao || !registroAReceber);
+
+        var habilitarCamposRecebimento = false;
+        if (registroAReceber || registroEmManutencao)
+            habilitarCamposRecebimento = true;
+
+        $("#recebimentoContaRecebimento").dxSelectBox("instance").option("disabled", !habilitarCamposRecebimento);
+        $("#recebimentoDataRecebimento").dxDateBox("instance").option("disabled", !habilitarCamposRecebimento);
+        $("#recebimentoValorRecebido").dxNumberBox("instance").option("disabled", !habilitarCamposRecebimento);
+        $("#recebimentoValorRecebido").dxNumberBox("instance").option("rtlEnabled", true);
+        $("#recebimentoButtonReceber").dxButton("instance").option("disabled", !habilitarCamposRecebimento);
+        $("#recebimentoButtonReceber").dxButton("instance").option("text", registroAReceber ? "Receber" : "Atualizar");
+
+        if (!registroEmManutencao && registroAReceber)
+            setarValoresDeCobrancaRecebimento();
+    }
+
+    function editarRecebimentoClick() {
+        inicializarCamposRecebimento(true);
+    }
+
+    $(document).ready(function () {
+        $("#recebimentoEmissaoInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#recebimentoEmissao").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });  
+        $("#recebimentoEmissaoInput").focus(function () {
+            $("#recebimentoEmissaoInput").setCursorPosition(0);
+        });
+        $("#recebimentoVencimentoInput").inputmask({
+            alias: "date",
+            "onincomplete": function () { $("#recebimentoVencimento").dxDateBox("instance").option("value", new Date()); },
+            placeholder: "_"
+        });
+        $("#recebimentoVencimentoInput").focus(function () {
+            $("#recebimentoVencimentoInput").setCursorPosition(0);
+        });
+
+        var registroNovo = $("#registroNovoRecebimento").val() === "True";
+        inicializarCamposRecebimento(registroNovo);
+    });
+
+</script>

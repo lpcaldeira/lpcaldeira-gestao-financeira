@@ -1,0 +1,75 @@
+﻿@model Gomi.Infraestrutura.Models.ControleAcesso.Usuario
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarUsuario" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridUsuarios">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idUsuario" })
+
+    <div id="add-usuario" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloUsuario"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <from class="form-horizontal form-material">
+                        <div class="form-group">
+                            <div class="col-md-12 m-b-20">
+                                <span>Nome</span>
+                                @(Html.DevExtreme()
+                                      .TextBoxFor(x => x.Nome)
+                                      .ID("usuarioNome")
+                                      .InputAttr("id", "usuarioNomeInput")
+                                      .Mode(TextBoxMode.Text))
+                            </div>
+                            <div class="col-md-12 m-b-20">
+                                <span>Id do usuário</span>
+                                @(Html.DevExtreme()
+                                      .TextBoxFor(x => x.NomeAcesso)
+                                      .ID("usuarioId")
+                                      .InputAttr("id", "usuarioIdInput")
+                                      .Mode(TextBoxMode.Text))
+                            </div>
+                            <div class="col-md-12 m-b-20">
+                                <span>Senha</span>
+                                @(Html.DevExtreme()
+                                      .TextBoxFor(x => x.NovaSenha)
+                                      .ID("usuarioSenha")
+                                      .InputAttr("id", "usuarioSenhaInput")
+                                      .Placeholder("Senha")
+                                      .Mode(TextBoxMode.Password))
+                            </div>
+                            <div class="col-md-12 m-b-20">
+                                <span>Confirmar senha</span>
+                                @(Html.DevExtreme()
+                                      .TextBoxFor(x => x.ConfirmaSenha)
+                                      .ID("usuarioConfirmaSenha")
+                                      .InputAttr("id", "usuarioConfirmaSenhaInput")
+                                      .Mode(TextBoxMode.Password))
+                            </div>
+                        </div>
+                    </from>
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("usuarioButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+            <!-- /.modal-content -->
+        </div>
+        <!-- /.modal-dialog -->
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function (viewComponent) {
+        $('#add-usuario').modal('hide');
+        $("#listaUsuarios").html(viewComponent);
+    };
+</script>

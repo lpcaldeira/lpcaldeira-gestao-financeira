@@ -1,0 +1,94 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Pessoas.Empresa>
+
+<script type="text/javascript">
+    function editPessoaEmpresaButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarEmpresa',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaEmpresa").html(viewComponent);
+                $('#add-empresa').modal('show');
+            }
+        });
+    }
+
+    function insertPessoaEmpresaButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirEmpresa',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaEmpresa").html(viewComponent);
+                $('#add-empresa').modal('show');
+            }
+        });
+    }
+
+    function toolbar_empresa_preparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+                hint: "Adicionar empresa",
+                text: "Novo empresa",
+                icon: "add",
+                elementAttr: {
+                    "class": "btn btn-success"
+                },
+                onClick: function (b) {
+                    insertPessoaEmpresaButtonClick();
+                }
+            }
+        }, {
+                location: "before",
+                widget: "dxButton",
+                options: {
+                    hint: "Importar empresas",
+                    text: "Importar...",
+                    elementAttr: {
+                        "class": "btn btn-default waves-effect"
+                    },
+                    onClick: function (b) {
+                        alert("Empresas importados com sucesso!");
+                    }
+                }
+            });
+    }
+
+</script>
+
+<form>
+    <h2 class="card-title">Lista de empresas</h2>
+    @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Pessoas.Empresa>()
+          .ID("gridEmpresas")
+          .DataSource(Model)
+          .TwoWayBindingEnabled(true)
+          .ShowColumnLines(false)
+          .ShowRowLines(true)
+          .ShowBorders(true)
+          .RowAlternationEnabled(true)
+          .LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+          .NoDataText("Nenhum registro encontrado.")
+          .Paging(p => p.PageSize(15))
+          .SearchPanel(searchPanel => searchPanel
+              .Visible(true)
+              .Width(350)
+              .Placeholder("Pesquisar...")
+          )
+          .Columns(columns =>
+          {
+              columns.AddFor(x => x.Razao).Caption("NOME");
+              columns.AddFor(x => x.Cnpj).Caption("CNPJ");
+              columns.AddFor(x => x.Telefone).Caption("TELEFONE");
+              columns.AddFor(x => x.Email).Caption("EMAIL");
+              columns.Add().Width(160).Alignment(HorizontalAlignment.Center)
+                  .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text("Editar").OnClick("function (e) { editPessoaEmpresaButtonClick(data) }")</text>);
+          })
+          .OnToolbarPreparing("toolbar_empresa_preparing"))
+</form>
+
+
+
+

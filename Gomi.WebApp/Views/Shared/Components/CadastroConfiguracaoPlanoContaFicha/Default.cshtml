@@ -1,0 +1,136 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.PlanoConta
+
+<form asp-controller="CadastrosConfiguracoes" asp-action="SalvarPlanoConta" data-ajax="true" data-ajax-method="POST" data-ajax-success="onSuccess" data-ajax-mode="replace" data-ajax-update="#gridPlanoContas">
+
+    @Html.AntiForgeryToken()
+    @Html.HiddenFor(model => model.Id, new { @id = "idPlanoContas" })
+
+    <div id="add-planoConta" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">T
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">@Html.ViewData["TituloPlanoConta"]</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    @using (Html.DevExtreme().ValidationGroup("planoContaValidationGroup"))
+                    {
+                        <div class="form-horizontal form-material">
+                            <div class="form-group">
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Grupo</span>
+                                        @(Html.DevExtreme()
+                                              .SelectBoxFor(x => x.Descricao)
+                                              .ID("planoContaGrupo")
+                                              .InputAttr("id", "planoContaGrupoInput")
+                                              .OnSelectionChanged("selecionarPlanoContaGrupoChanged")
+                                              .DataSource(Model.Grupos))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 m-b-20">
+                                        <span>Categoria</span>
+                                        @(Html.DevExtreme()
+                                              .TextBoxFor(x => x.Categoria)
+                                              .ID("planoContaCategoria")
+                                              .InputAttr("id", "planoContaCategoriaInput")
+                                              .Mode(TextBoxMode.Text))
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 m-b-20">
+                                        @(Html.DevExtreme()
+                                              .RadioGroupFor(x => x.TipoMovimento)
+                                              .ID("planoContaTipoMovimento")
+                                              .Items(Model.TiposMovimento)
+                                              .Layout(Orientation.Horizontal))
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div class="modal-footer">
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("planoContaButtonSalvar")
+                          .UseSubmitBehavior(true)
+                          .ValidationGroup("planoContaValidationGroup")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Salvar"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("planoContaButtonEditar")
+                          .ElementAttr("class", "btn btn-default text-uppercase waves-effect waves-light")
+                          .Text("Editar")
+                          .OnClick("editarPlanoContaClick"))
+                    @(Html.DevExtreme()
+                          .Button()
+                          .ID("planoContaButtonExcluir")
+                          .ElementAttr("class", "btn btn-info text-uppercase waves-effect waves-light")
+                          .Text("Excluir")
+                          .OnClick("excluirPlanoContaClick"))
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script type="text/javascript">
+    var onSuccess = function (viewComponent) {
+        $('#add-planoConta').modal('hide');
+        $("#listaPlanoContas").html(viewComponent);
+    };
+
+    function selecionarPlanoContaGrupoChanged(data) {
+        if ($("#planoContaTipoMovimento").data("dxRadioGroup") === undefined) return;
+        $("#planoContaTipoMovimento").dxRadioGroup("instance").option("disabled", false);
+        verificarGrupoSelecionado();
+    }
+
+    function verificarGrupoSelecionado() {
+        var grupoSelecionado = $("#planoContaGrupo").dxSelectBox("instance").option("value");
+        if ((grupoSelecionado === "Receitas operacionais") || (grupoSelecionado === "Deduções")) {
+            $("#planoContaTipoMovimento").dxRadioGroup("instance").option("value", "Entrada");
+            $("#planoContaTipoMovimento").dxRadioGroup("instance").option("disabled", true);
+        } else if ((grupoSelecionado === "Despesas operacionais") || (grupoSelecionado === "Custos")) {
+            $("#planoContaTipoMovimento").dxRadioGroup("instance").option("value", "Saída");
+            $("#planoContaTipoMovimento").dxRadioGroup("instance").option("disabled", true);
+        } 
+    }
+
+    function habilitarCamposPlanoConta(permiteEditar) {
+        $("#planoContaTipoMovimento").dxRadioGroup("instance").option("disabled", !permiteEditar);
+        $("#planoContaGrupo").dxSelectBox("instance").option("disabled", !permiteEditar);
+        $("#planoContaCategoria").dxTextBox("instance").option("disabled", !permiteEditar);
+        $("#planoContaButtonSalvar").dxButton("instance").option("visible", permiteEditar);
+        $("#planoContaButtonEditar").dxButton("instance").option("visible", !permiteEditar);
+        $("#planoContaButtonExcluir").dxButton("instance").option("visible", !permiteEditar);
+
+        verificarGrupoSelecionado();
+    }
+
+    function editarPlanoContaClick() {
+        habilitarCamposPlanoConta(true);
+    }
+
+    function excluirPlanoContaClick() {
+        var planoConta = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model));
+        $.ajax({
+            url: '/CadastrosConfiguracoes/ExcluirPlanoConta',
+            type: 'POST',
+            data: planoConta,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $('#add-planoConta').modal('hide');
+                $("#listaPlanoContas").html(viewComponent);
+            }
+        });
+    }
+
+    $(document).ready(function () {
+        var registroNovo = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(Model.RegistroNovo));
+        habilitarCamposPlanoConta(registroNovo);
+    });
+</script>

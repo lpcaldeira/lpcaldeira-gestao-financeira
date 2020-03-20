@@ -1,0 +1,22 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.GastosOperacionais>
+
+@(Html.DevExtreme().DataGrid()
+
+
+    .DataSource(Model)
+  
+    .Columns(c =>
+    {
+        c.Add().DataField("Mes").Width(160).Format(Format.MonthAndYear);
+        c.Add().DataField("Custos").Width(80); 
+        c.Add().DataField("Despesas").Width(80); 
+        c.Add().DataField("Deducoes").Caption("Deduções").Width(80);
+       
+        
+    })
+
+)
+
+

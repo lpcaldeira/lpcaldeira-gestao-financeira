@@ -1,0 +1,89 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.CentroCusto>
+
+<script type="text/javascript">
+
+    function editCentroCustoButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarCentroCusto',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaCentroCusto").html(viewComponent);
+                $('#add-centroCusto').modal('show');
+            }
+        });
+    }
+
+    function insertCentroCustoButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirCentroCusto',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaCentroCusto").html(viewComponent);
+                $('#add-centroCusto').modal('show');
+            }
+        });
+    }
+
+    function toolbar_centro_custo_preparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+                hint: "Adicionar centro de custo",
+                text: "Novo centro de custo",
+                icon: "add",
+                elementAttr: {
+                    "class": "btn btn-success"
+                },
+                onClick: function (b) {
+                    insertCentroCustoButtonClick();
+                }
+            }
+        }, {
+            location: "before",
+            widget: "dxButton",
+            options: {
+                hint: "Importar centro de custos",
+                text: "Importar...",
+                elementAttr: {
+                    "class": "btn btn-default waves-effect"
+                },
+                onClick: function (b) {
+                    alert("Centro de custos importados com sucesso!");
+                }
+            }
+        });
+    }
+
+</script>
+
+<form>
+    <h4 class="card-title" style="font-family:Assistant;">Lista de Centro de Custos</h4>
+    @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.Financeiro.CentroCusto>()
+          .ID("gridCentroCustos")
+          .DataSource(Model)
+          .TwoWayBindingEnabled(true)
+          .ShowColumnLines(false)
+          .ShowRowLines(true)
+          .ShowBorders(true)
+          .RowAlternationEnabled(true)
+          .LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+          .NoDataText("Nenhum registro encontrado.")
+          .Paging(p => p.PageSize(15))
+          .SearchPanel(searchPanel => searchPanel
+              .Visible(true)
+              .Width(350)
+              .Placeholder("Pesquisar...")
+          )
+          .Columns(columns =>
+          {
+          columns.Add().DataField("Descricao").Caption("DESCRICAO");
+          columns.Add().Width(160).Alignment(HorizontalAlignment.Center);
+          columns.Add().CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Icon("edit").Hint("Editar").OnClick("function (e) { editCentroCustoButtonClick(data) }")</text>).Width(160);
+//                  .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text("Editar").OnClick("function (e) { editCentroCustoButtonClick(data) }")</text>);
+          })
+          .OnToolbarPreparing("toolbar_centro_custo_preparing"))
+</form>

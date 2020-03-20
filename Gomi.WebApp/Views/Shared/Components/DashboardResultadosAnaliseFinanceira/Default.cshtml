@@ -1,0 +1,53 @@
+﻿
+
+@model IEnumerable<Gomi.Infraestrutura.Models.Financeiro.Dashboard.AnaliseFinanceira>
+
+<h6 class="text-justify" style="margin:0px; top:0px; font-size:12px; color:purple"> <b>Análise Financeira</b></h6>
+
+    @(Html.DevExtreme().Chart()
+        .CommonAxisSettings(c => c.Grid(g => g.Visible(false)).Label(l =>  l.DisplayMode(ChartLabelDisplayMode.Standard).Font(f => f.Size(8))))
+            .ArgumentAxis(a => a.Visible(true).TickInterval(t => t.Months(1)).AxisDivisionFactor(10).Tick(t => t.Visible(false)).Label(l => l.Format("MMM")).Position(Position.Bottom).Type(AxisScaleType.Discrete))
+        .CommonSeriesSettings(s => s
+            .ArgumentField("Mes")
+            .Type(SeriesType.SplineArea)
+        )
+
+        .Palette(VizPalette.GreenMist)
+        .Series(s =>
+        {
+            s.Add().ValueField("Resultadooperacional").Name("Resultado Operacional");//.Color("#0040ff");
+            s.Add().ValueField("Resultadofinanceiro").Name("Resultado Financeiro");//.Color("#ffff00");
+            s.Add().ValueField("Margemcontribuicao").Name("Margem Contribuição");//.Color("#00ff00");
+        })
+
+          .Size(s => s.Height(110).Width(500))
+         .Tooltip(t => t
+        .Enabled(true).Shared(true))
+        .Legend(l => l .Visible(true) .Font(f=> f.Size(8))
+        .VerticalAlignment(VerticalEdge.Top)
+        .HorizontalAlignment(HorizontalAlignment.Center))
+
+        .DataSource(Model)
+    )
+ 
+<button type="button" style="position:absolute; top:5px; left:500px; color:white; " class="btn btn-danger " data-toggle="modal" data-target="#add-grid-analise-financeira">+</button>
+
+
+<div id="add-grid-analise-financeira" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg ">
+        <div class="modal-content modal-lg">
+            <div class="modal-header  modal-lg">
+                <h4 class="modal-title">Analise Financeira</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body  modal-lg">
+                <div>
+                    <vc:dashboard-resultados-analise-financeira-grid max-priority="3" is-done="false">
+                    </vc:dashboard-resultados-analise-financeira-grid>
+                </div>
+            </div>
+            <div class="modal-footer modal-lg">
+            </div>
+        </div>
+    </div>
+</div>   

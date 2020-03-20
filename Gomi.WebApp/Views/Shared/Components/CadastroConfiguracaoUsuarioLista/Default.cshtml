@@ -1,0 +1,88 @@
+﻿@model IEnumerable<Gomi.Infraestrutura.Models.ControleAcesso.Usuario>
+
+<script type="text/javascript">
+    function editUsuarioButtonClick(data) {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/EditarUsuario',
+            type: 'POST',
+            data: data,
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaUsuario").html(viewComponent);
+                $('#add-usuario').modal('show');
+            }
+        });
+    }
+
+    function insertUsuarioButtonClick() {
+        $.ajax({
+            url: '/CadastrosConfiguracoes/InserirUsuario',
+            type: 'POST',
+            dataType: 'html',
+            success: function (viewComponent) {
+                $("#fichaUsuario").html(viewComponent);
+                $('#add-usuario').modal('show');
+            }
+        });
+    }
+
+    function toolbar_usuario_preparing(e) {
+        e.toolbarOptions.items.unshift({
+            location: "before",
+            widget: "dxButton",
+            options: {
+                hint: "Adicionar usuario",
+                text: "Novo usuario",
+                icon: "add",
+                elementAttr: {
+                    "class": "btn btn-success"
+                },
+                onClick: function (b) {
+                    insertUsuarioButtonClick();
+                }
+            }
+        }, {
+                location: "before",
+                widget: "dxButton",
+                options: {
+                    hint: "Importar usuarios",
+                    text: "Importar...",
+                    elementAttr: {
+                        "class": "btn btn-default waves-effect"
+                    },
+                    onClick: function (b) {
+                        alert("Usuarios importados com sucesso!");
+                    }
+                }
+            });
+    }
+
+</script>
+
+<form>
+    <h2 class="card-title">Lista de usuarios</h2>
+    @(Html.DevExtreme().DataGrid<Gomi.Infraestrutura.Models.ControleAcesso.Usuario>()
+          .ID("gridUsuarios")
+          .DataSource(Model)
+          .TwoWayBindingEnabled(true)
+          .ShowColumnLines(false)
+          .ShowRowLines(true)
+          .ShowBorders(true)
+          .RowAlternationEnabled(true)
+          .LoadPanel(p => p.Enabled(true).Text("Aguarde..."))
+          .NoDataText("Nenhum registro encontrado.")
+          .Paging(p => p.PageSize(15))
+          .SearchPanel(searchPanel => searchPanel
+              .Visible(true)
+              .Width(350)
+              .Placeholder("Pesquisar...")
+          )
+          .Columns(columns =>
+          {
+              columns.Add().DataField("Nome").Caption("NOME");
+              columns.Add().DataField("IdUsuario").Caption("Id Usuário");
+              columns.Add().Width(160).Alignment(HorizontalAlignment.Center)
+                  .CellTemplate(@<text>@Html.DevExtreme().Button().ElementAttr("class", "btn-link").Text("Editar").OnClick("function (e) { editUsuarioButtonClick(data) }")</text>);
+          })
+          .OnToolbarPreparing("toolbar_usuario_preparing"))
+</form>

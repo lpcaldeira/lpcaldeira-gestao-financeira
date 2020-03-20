@@ -1,0 +1,12 @@
+﻿@model Gomi.Infraestrutura.Models.Financeiro.Dashboard.ResultadoPrevistoParaMes;
+
+
+    <h6 style="color:lawngreen;margin-bottom:0px;  font-size:12px;"><b> RECEBIMENTOS</b></h6>
+<li style="list-style-type: none;"><hr style="height:1px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;" /></li> 
+   <font style="color:black;font-size:10px;margin-bottom:0px;"><b>Previsto:  @(Model.Previsto)</b></font>
+<li style="list-style-type: none;"><hr style="height:1px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;" /></li>
+    <font style="color:green;font-size:10px;margin-bottom:0px;"><b>Recebido:   @(Model.Recebido) </b></font>
+<li style="list-style-type: none;"><hr style="height:1px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;" /></li>
+    <font style="color:black;font-size:10px;margin-bottom:0px;"><b>A Vencer:   @(Model.AVencer)  </b></font>
+<li style="list-style-type: none;"><hr style="height:1px; border:none; color:#000; background-color:#000; margin-top: 0px; margin-bottom: 0px;" /></li>
+    <font style="color:red;font-size:10px;margin-bottom:0px;"><b> Vencidos:  @(Model.Vencidos)  </b></font>
