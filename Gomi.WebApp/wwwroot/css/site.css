@@ -1,0 +1,363 @@
+﻿/*Layout*/
+
+body{ font-family: Assistant !important}
+
+.dx-datagrid-rowsview .dx-selection.dx-row.dx-row-lines > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:hover.dx-row-lines > td {
+    border-bottom-color: #caf6f5 !important;
+}
+
+.dx-datagrid-rowsview .dx-selection.dx-row.dx-row-lines > td, .dx-datagrid-rowsview .dx-selection.dx-row:hover.dx-row-lines > td {
+    border-bottom-color: #17bebb !important;
+    background-color:lightgray !important;
+}
+
+
+
+.dx-datagrid .dx-row > td {
+    padding: 3px !important;
+}
+
+.dx-button-has-text .dx-button-content {
+    padding: 7px 14px 8px;
+}
+
+.dx-button-has-icon .dx-icon {
+    color: #333;
+    width: 8px !important;
+    height: 8px !important;
+    background-position: 0px 0px;
+    -webkit-background-size: 18px 18px;
+    -moz-background-size: 18px 18px;
+    background-size: 18px 18px;
+    padding: 0px !important;
+    font-size: 8px !important;
+    text-align: center;
+    line-height: 8px !important;
+    margin-right: 0;
+    margin-left: 0;
+}
+.dx-button {
+    display: inline-block;
+    cursor: pointer;
+    text-align: left !important;
+    vertical-align: middle;
+    max-width: 100%;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    -o-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-drag: none;
+    -moz-user-drag: none;
+    -ms-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+.dx-widget {
+    font-family: Assistant !important;
+    font-size: 12px !important;
+}
+
+    .dx-widget input, .dx-widget textarea {
+        font-family: Assistant !important;
+    }
+
+.container-fluid {
+    padding: 0 10px 5px 10px !important;
+}
+
+.container-page-limit {
+    max-width: 1280px !important;
+    margin-right: auto !important;
+    margin-left: auto !important;
+    padding-right: 15px !important;
+    padding-left: 15px !important;
+    width: 100% !important;
+}
+
+.sub-menu {
+    position: absolute !important;
+    width: 100%;
+    margin-top: -1px;
+}
+
+    .sub-menu .card-header {
+        padding: .5rem !important;
+    }
+
+        .sub-menu .card-header .nav {
+            font-size: 13px !important;
+            font-weight: 400 !important;
+        }
+
+            .sub-menu .card-header .nav .nav-item .nav-link {
+                padding: .1rem .75rem !important;
+            }
+
+                .sub-menu .card-header .nav .nav-item .nav-link.active {
+                    background-color: transparent !important;
+                    color: #17bebb !important;
+                    font-weight: 500;
+                }
+
+.row {
+    margin-right: -5px !important;
+    margin-left: -5px !important;
+}
+
+.col, .col-1, .col-10, .col-11, .col-12, .col-2, .col-3, .col-4, .col-5, .col-6, .col-7, .col-8, .col-9,
+.col-auto, .col-lg, .col-lg-1, .col-lg-10, .col-lg-11, .col-lg-12, .col-lg-2, .col-lg-3, .col-lg-4, .col-lg-5,
+.col-lg-6, .col-lg-7, .col-lg-8, .col-lg-9, .col-lg-auto, .col-md, .col-md-1, .col-md-10, .col-md-11, .col-md-12,
+.col-md-2, .col-md-3, .col-md-4, .col-md-5, .col-md-6, .col-md-7, .col-md-8, .col-md-9, .col-md-auto, .col-sm,
+.col-sm-1, .col-sm-10, .col-sm-11, .col-sm-12, .col-sm-2, .col-sm-3, .col-sm-4, .col-sm-5, .col-sm-6, .col-sm-7,
+.col-sm-8, .col-sm-9, .col-sm-auto, .col-xl, .col-xl-1, .col-xl-10, .col-xl-11, .col-xl-12, .col-xl-2, .col-xl-3,
+.col-xl-4, .col-xl-5, .col-xl-6, .col-xl-7, .col-xl-8, .col-xl-9, .col-xl-auto {
+    padding-right: 5px !important;
+    padding-left: 5px !important;
+}
+
+/*Top bar*/
+.topbar .top-navbar {
+    min-height: 60px !important;
+    height: 60px !important;
+    box-shadow: 0 0 4px rgba(0,0,0,.14), 0 1px 2px rgba(0,0,0,.28) !important;
+}
+
+.mini-sidebar .top-navbar .navbar-header {
+    width: 150px !important;
+    text-align: left !important;
+}
+
+
+/*Left side bar*/
+.card-no-border .left-sidebar, .card-no-border .sidebar-nav {
+    background: #0B587D !important;
+}
+
+
+/*Content*/
+.page-wrapper {
+    background: #f7f7f7 !important;
+}
+
+/*Tabs*/
+.nav-tabs {
+    text-align: center;
+    display: block !important;
+}
+
+    .nav-tabs .nav-item {
+        display: inline;
+    }
+
+        .nav-tabs .nav-item a {
+            background-color: #17bebb;
+            font-weight: 400;
+            color: white !important;
+            padding: 8px 25px !important;
+            text-transform: uppercase;
+            font-size: 14px;
+            border-radius: 2px 2px 0 0 !important;
+            display: inline-block !important;
+            z-index: 1;
+            position: relative;
+        }
+
+.customtab li a.nav-link.active {
+    border: 1px solid #cad4d6;
+    border-bottom: 0 !important;
+    color: #0B587D !important;
+}
+
+.customtab li a.nav-link:hover {
+    color: #0B587D !important;
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #f7f7f7 !important;
+}
+
+.nav-pills .nav-link.active {
+    color: #fff !important;
+    background-color: #17bebb !important;
+}
+
+.nav-pills .nav-item a {
+    color: #0B587D !important;
+}
+
+/* Buttons */
+.dx-button-text {
+    line-height: 1.25 !important;
+}
+
+.dx-button-has-text .dx-icon {
+    font-size: 14px !important;
+}
+
+.btn-success, .btn-success.disabled {
+    background: #17bebb !important;
+    border: 1px solid #17bebb !important;
+    color: #ffffff !important;
+}
+
+    .btn-success.dx-button .dx-icon {
+        color: #fff !important;
+    }
+
+
+.btn-info, .btn-info.disabled {
+    background: #0B587D !important;
+    border: 1px solid #0B587D !important;
+    color: #ffffff !important;
+}
+
+    .btn-info.dx-button .dx-icon {
+        color: #fff !important;
+    }
+
+.btn-link {
+    border: none !important;
+    background: none !important;
+    color: #337ab7 !important;
+    cursor: pointer;
+}
+
+    .btn-link .dx-button-content .dx-button-text {
+        text-decoration: underline;
+    }
+
+    .btn-link.dx-button-has-text .dx-button-content {
+        padding: 0 !important;
+    }
+
+/* Radio button*/
+
+.dx-item.dx-radiobutton .dx-item-content {
+    font-size: 16px;
+    color: #99abb4;
+    font-weight: 300;
+    line-height: 1.5;
+}
+
+/* Inputs */
+
+.dx-texteditor-input {
+    padding: 2px !important;
+}
+
+.dx-datebox.dx-auto-width.dx-dropdowneditor-button-visible .dx-texteditor-input,
+.dx-datebox:not(.dx-texteditor-empty).dx-auto-width.dx-dropdowneditor-button-visible .dx-texteditor-input {
+    padding-right: 0 !important;
+}
+
+.dx-dropdowneditor-button-visible .dx-texteditor-input {
+    padding-right: 0 !important;
+}
+
+.dx-dropdowneditor.dx-state-hover .dx-dropdowneditor-icon,
+.dx-dropdowneditor.dx-state-active .dx-dropdowneditor-icon,
+.dx-dropdowneditor.dx-dropdowneditor-active .dx-dropdowneditor-icon {
+    background-color: transparent !important;
+}
+
+/* DataGrid */
+
+.dx-datagrid-rowsview .dx-row > .dx-master-detail-cell {
+    padding: 0px;
+}
+
+
+
+@media (min-width: 768px) {
+    .navbar-header {
+        padding-left: 10px;
+        width: 160px;
+    }
+
+    .modal-dialog {
+        max-width: 740px !important;
+    }
+}
+
+.customClass {
+    color: red !important;
+}
+
+/* Cadastro rápido*/
+
+.cadastroRapido {
+    background-color: white;
+    position: absolute;
+    z-index: 4;
+    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.4);
+    padding: 10px 22px 10px 10px;
+    width: 430px;
+    left: 6px;
+}
+
+    .cadastroRapido .cancelar {
+        color: #333333;
+        position: absolute;
+        right: 4px;
+        top: 0;
+        cursor: pointer;
+        display: inline-block;
+        z-index: 2;
+    }
+
+    .cadastroRapido .dx-button-has-text .dx-button-content {
+        padding: 8px !important;
+        font-size: 12px;
+    }
+
+.containerSelect .dx-textbox .dx-texteditor-container .dx-texteditor-buttons-container .dx-dropdowneditor-button {
+    width: 24px !important;
+}
+
+    .containerSelect .dx-textbox .dx-texteditor-container .dx-texteditor-buttons-container .dx-dropdowneditor-button .dx-button-content .dx-dropdowneditor-icon {
+        width: 20px !important;
+    }
+
+.containerAddCadastroRapido {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    width: auto;
+    height: 100%;
+}
+
+    .containerAddCadastroRapido .dx-button {
+        border: none;
+        height: 34px;
+        padding: 1px;
+    }
+
+        .containerAddCadastroRapido .dx-button.dx-state-hover,
+        .containerAddCadastroRapido .dx-button.dx-state-focus,
+        .containerAddCadastroRapido .dx-button.dx-state-focused,
+        .containerAddCadastroRapido .dx-button.dx-state-active {
+            background-color: #ffffff;
+            border-color: #ffffff;
+        }
+
+        .containerAddCadastroRapido .dx-button .dx-button-content {
+            padding: 8px 2px;
+        }
+
+            .containerAddCadastroRapido .dx-button .dx-button-content .dx-icon {
+                border: 1px solid transparent;
+                color: #333;
+                font: 12px/1 DXIcons;
+                height: 100%;
+                text-align: center;
+                -webkit-border-radius: 3px;
+                -moz-border-radius: 3px;
+                -ms-border-radius: 3px;
+                -o-border-radius: 3px;
+                border-radius: 3px;
+            }
