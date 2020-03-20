@@ -1,0 +1,78 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26730.12
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gomi.WebApp", "Gomi.WebApp\Gomi.WebApp.csproj", "{8DAA80BB-4092-4C2D-B084-ED26F1C39C1D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dapper", "Dapper", "{9C519AB5-6EC4-4D10-827C-F204B97CD0FD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.PostgreSql", "Dapper.PostgreSql\Dapper.PostgreSql.csproj", "{32B1BC39-B9F8-4F5B-8754-FBD1917B405C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gomi.Infraestrutura", "Gomi.Infraestrutura\Gomi.Infraestrutura.csproj", "{581F3E0A-9E48-4B0A-8BB9-1EEC885933CD}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gomi.Dados", "Gomi.Dados\Gomi.Dados.csproj", "{68B300A3-08E5-4CA6-82B9-55887E72ABC5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Dapper.Core", "Dapper.Core\Dapper.Core.csproj", "{338345AD-3A42-4F69-8903-7E609B938B08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DAA80BB-4092-4C2D-B084-ED26F1C39C1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DAA80BB-4092-4C2D-B084-ED26F1C39C1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DAA80BB-4092-4C2D-B084-ED26F1C39C1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DAA80BB-4092-4C2D-B084-ED26F1C39C1D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32B1BC39-B9F8-4F5B-8754-FBD1917B405C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32B1BC39-B9F8-4F5B-8754-FBD1917B405C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32B1BC39-B9F8-4F5B-8754-FBD1917B405C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32B1BC39-B9F8-4F5B-8754-FBD1917B405C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{581F3E0A-9E48-4B0A-8BB9-1EEC885933CD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{581F3E0A-9E48-4B0A-8BB9-1EEC885933CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{581F3E0A-9E48-4B0A-8BB9-1EEC885933CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{581F3E0A-9E48-4B0A-8BB9-1EEC885933CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{68B300A3-08E5-4CA6-82B9-55887E72ABC5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{68B300A3-08E5-4CA6-82B9-55887E72ABC5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{68B300A3-08E5-4CA6-82B9-55887E72ABC5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{68B300A3-08E5-4CA6-82B9-55887E72ABC5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{338345AD-3A42-4F69-8903-7E609B938B08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{338345AD-3A42-4F69-8903-7E609B938B08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{338345AD-3A42-4F69-8903-7E609B938B08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{338345AD-3A42-4F69-8903-7E609B938B08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{32B1BC39-B9F8-4F5B-8754-FBD1917B405C} = {9C519AB5-6EC4-4D10-827C-F204B97CD0FD}
+		{338345AD-3A42-4F69-8903-7E609B938B08} = {9C519AB5-6EC4-4D10-827C-F204B97CD0FD}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {6F8070ED-CE42-49ED-A42A-17DCC32B9704}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 6
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://biardteam.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Gomi.WebApp\\Gomi.WebApp.csproj
+		SccProjectName1 = Gomi.WebApp
+		SccLocalPath1 = Gomi.WebApp
+		SccProjectUniqueName2 = Dapper.PostgreSql\\Dapper.PostgreSql.csproj
+		SccProjectTopLevelParentUniqueName2 = Gomi.sln
+		SccProjectName2 = Dapper.PostgreSql
+		SccLocalPath2 = Dapper.PostgreSql
+		SccProjectUniqueName3 = Gomi.Infraestrutura\\Gomi.Infraestrutura.csproj
+		SccProjectName3 = Gomi.Infraestrutura
+		SccLocalPath3 = Gomi.Infraestrutura
+		SccProjectUniqueName4 = Gomi.Dados\\Gomi.Dados.csproj
+		SccProjectName4 = Gomi.Dados
+		SccLocalPath4 = Gomi.Dados
+		SccProjectUniqueName5 = Dapper.Core\\Dapper.Core.csproj
+		SccProjectTopLevelParentUniqueName5 = Gomi.sln
+		SccProjectName5 = Dapper.Core
+		SccLocalPath5 = Dapper.Core
+	EndGlobalSection
+EndGlobal
