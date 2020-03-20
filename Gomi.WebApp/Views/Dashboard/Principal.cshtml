@@ -1,0 +1,31 @@
+﻿@{Layout = "~/Views/Shared/_LayoutDefault.cshtml";}
+@using (Html.BeginForm())
+{
+    <div class="container-fluid">
+        <!-- Nav tabs -->
+        <ul class="nav nav-tabs customtab" role="tablist">
+            <li class="nav-item"> <a class="nav-link active" data-toggle="tab" href="#resumo" role="tab"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">RESUMO</span></a></li>
+            <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#resultados" role="tab"><span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">RESULTADOS</span></a></li>
+            <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#financeiro" role="tab"><span class="hidden-sm-up"><i class="ti-email"></i></span> <span class="hidden-xs-down">CONTAS A PAGAR E RECEBER</span></a></li>
+            <li class="nav-item"> <a class="nav-link" data-toggle="tab" href="#controladoria" role="tab"><span class="hidden-sm-up"><i class="ti-email"></i></span> <span class="hidden-xs-down">CAPITAL DE GIRO</span></a></li>
+        </ul>
+
+        <!-- Tab panes -->
+        <div class="tab-content">
+            <div class="tab-pane active" id="resumo" role="tabpanel">
+                <div class="p-t-10">
+                    @Html.Partial("AbaResumo")
+                </div>
+            </div>
+            <div class="tab-pane  p-10" id="resultados" role="tabpanel">
+                @Html.Partial("AbaResultado")
+            </div>
+            <div class="tab-pane p-10" id="financeiro" role="tabpanel">
+                @Html.Partial("AbaContasPagarReceber")
+            </div>
+            <div class="tab-pane p-10" id="controladoria" role="tabpanel">
+                @Html.Partial("AbaCapitalGiro")
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,41 @@
+﻿@{Layout = "~/Views/Shared/_LayoutDefault.cshtml";}
+
+<div class="container-fluid container-page-limit">
+    <!-- Nav tabs -->
+    <ul class="nav nav-tabs customtab border-bottom-0 p-t-20">
+        <li class="nav-item"> <a href="#movimentacao" class="nav-link active" data-toggle="tab" aria-expanded="True"><span class="hidden-sm-up"><i class="ti-id-badge"></i></span> <span class="hidden-xs-down">MOVIMENTAÇÕES</span></a></li>
+        <li class="nav-item"> <a href="#pessoa" class="nav-link" data-toggle="tab" aria-expanded="True"><span class="hidden-sm-up"><i class="ti-id-badge"></i></span> <span class="hidden-xs-down">PESSOAS</span></a></li>
+        <li class="nav-item"> <a href="#conta" class="nav-link" data-toggle="tab" aria-expanded="False"><span class="hidden-sm-up"><i class="ti-wallet"></i></span> <span class="hidden-xs-down">CONTAS E EXTRATOS</span></a></li>
+        <li class="nav-item"> <a href="#categoriaCentroCusto" class="nav-link" data-toggle="tab" aria-expanded="False"><span class="hidden-sm-up"><i class="ti-menu"></i></span> <span class="hidden-xs-down">CATEGORIAS / CENTRO DE CUSTOS</span></a></li>
+        @*<li class="nav-item"> <a href="#empresa" class="nav-link" data-toggle="tab" aria-expanded="False"><span class="hidden-sm-up"><i class="ti-home"></i></span> <span class="hidden-xs-down">EMPRESA</span></a></li>
+        <li class="nav-item"> <a href="#usuario" class="nav-link" data-toggle="tab" aria-expanded="False"><span class="hidden-sm-up"><i class="ti-user"></i></span> <span class="hidden-xs-down">USUÁRIOS</span></a></li>*@
+    </ul>
+
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane active" id="movimentacao">
+            @Html.Partial("AbaMovimentacoes")
+        </div>
+        <div class="tab-pane" id="pessoa">
+            @Html.Partial("AbaPessoa")
+        </div>
+        <div class="tab-pane" id="conta">
+            @Html.Partial("AbaConta")
+        </div>
+        <div class="tab-pane" id="categoriaCentroCusto">
+            @Html.Partial("AbaCategoriaCentroCusto")
+        </div>
+        @*<div class="tab-pane" id="empresa">
+            @Html.Partial("AbaEmpresa")
+        </div>
+        <div class="tab-pane" id="usuario">
+            @Html.Partial("AbaUsuario")
+        </div>*@
+    </div>
+</div>
+
+<script src="@Url.Content("~/lib/bootstrap/dist/js/bootstrap.min.js")"></script>
+
+<!-- jQuery and Bootstrap's JavaScript-->
+@*<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.2/js/bootstrap.min.js"></script>*@

@@ -1,0 +1,40 @@
+﻿<div class="row">
+    <div class="col-12">
+        <div class="card sub-menu">
+            <div class="card-header">
+                <ul class="nav nav-pills">
+                    <li class="nav-item"><a href="#nav-contaextrato-conta" class="nav-link active" data-toggle="tab" aria-expanded="false">CONTAS</a></li>
+                    <li class="nav-item"><a href="#nav-contaextrato-extrato" class="nav-link" data-toggle="tab" aria-expanded="false">EXTRATOS</a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content br-n pn">
+                    <div id="nav-contaextrato-conta" class="tab-pane active">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="listaContas">
+                                    <vc:cadastro-configuracao-conta-lista max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-conta-lista>
+                                </div>
+                                <div id="fichaConta">
+                                    <vc:cadastro-configuracao-conta-ficha max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-conta-ficha>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nav-contaextrato-extrato" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="extratoConta">
+                                    <vc:cadastro-configuracao-conta-extrato max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-conta-extrato>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

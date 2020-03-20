@@ -1,0 +1,97 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <!-- Favicon icon -->
+    <link rel="icon" type="image/png" sizes="16x16" href="@Url.Content("~/images/Logo2.png")">
+    <title>Gomi</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="@Url.Content("~/lib/material-pro/assets/plugins/bootstrap/css/bootstrap.min.css")" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="@Url.Content("~/lib/material-pro/main/css/style.css")" rel="stylesheet">
+
+
+    <link href="@Url.Content("~/lib/devextreme/css/dx.common.css")" rel="stylesheet" />
+    
+    <script src="@Url.Content("~/lib/jquery/dist/jquery.js")"></script>
+    <script src="@Url.Content("~/lib/jquery.unobtrusive-ajax/jquery.unobtrusive-ajax.min.js")"></script>
+    <script src="@Url.Content("~/lib/devextreme/js/dx.all.js")"></script>
+    <script src="@Url.Content("~/lib/devextreme-aspnet-data/js/dx.aspnet.data.js")"></script>
+    <script src="@Url.Content("~/lib/devextreme/js/dx.aspnet.mvc.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/cldr.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/cldr/event.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/cldr/supplemental.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/globalize.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/globalize/message.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/globalize/number.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/globalize/currency.js")"></script>
+    <script src="@Url.Content("~/js/devextreme/globalize/date.js")"></script>
+    <script src="@Url.Content("~/lib/devextreme/js/localization/dx.messages.pt-BR.js")"></script>
+    <script type="text/javascript" >
+        $(function () {
+            DevExpress.localization.locale('pt-BR');
+           // Globalize.locale('pt');
+        });
+    </script>
+    
+    
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!-- ============================================================== -->
+    <!-- Preloader - style you can find in spinners.css -->
+    <!-- ============================================================== -->
+    <div class="preloader">
+        <svg class="circular" viewBox="25 25 50 50">
+            <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10" />
+        </svg>
+    </div>
+    <!-- ============================================================== -->
+    <!-- Main wrapper - style you can find in pages.scss -->
+    <!-- ============================================================== -->
+    <section id="wrapper">
+        @*<div class="login-register" style="background-image:url('@Url.Content("~/lib/material-pro/assets/images/background/login-register.jpg")');">*@
+        <div class="login-register">
+            @RenderBody()
+        </div>
+    </section>
+    <!-- ============================================================== -->
+    <!-- End Wrapper -->
+    <!-- ============================================================== -->
+    <!-- ============================================================== -->
+    <!-- All Jquery -->
+    <!-- ============================================================== -->
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/jquery/jquery.min.js")"></script>
+    <!-- Bootstrap tether Core JavaScript -->
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/bootstrap/js/popper.min.js")"></script>
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/bootstrap/js/bootstrap.min.js")"></script>
+    <!-- slimscrollbar scrollbar JavaScript -->
+    <script src="@Url.Content("~/lib/material-pro/main/js/jquery.slimscroll.js")"></script>
+    <!--Wave Effects -->
+    <script src="@Url.Content("~/lib/material-pro/main/js/waves.js")"></script>
+    <!--Menu sidebar -->
+    <script src="@Url.Content("~/lib/material-pro/main/js/sidebarmenu.js")"></script>
+    <!--stickey kit -->
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/sticky-kit-master/dist/sticky-kit.min.js")"></script>
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/sparkline/jquery.sparkline.min.js")"></script>
+    <!--Custom JavaScript -->
+    <script src="@Url.Content("~/lib/material-pro/main/js/custom.min.js")"></script>
+    <!-- ============================================================== -->
+    <!-- Style switcher -->
+    <!-- ============================================================== -->
+    <script src="@Url.Content("~/lib/material-pro/assets/plugins/styleswitcher/jQuery.style.switcher.js")"></script>
+</body>
+
+</html>

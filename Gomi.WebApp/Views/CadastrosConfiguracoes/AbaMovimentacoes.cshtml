@@ -1,0 +1,50 @@
+﻿<div class="row">
+    <div class="col-12">
+        <div class="card sub-menu">
+            <div class="card-header">
+                <ul class="nav nav-pills">
+                    <li class="nav-item"><a href="#nav-movimentacao" class="nav-link" data-toggle="tab" aria-expanded="false">INSERIR MOVIMENTAÇÕES</a></li>
+                    <li class="nav-item"><a href="#nav-movimentacao-recebimento" class="nav-link" data-toggle="tab" aria-expanded="false">REALIZAR RECEBIMENTOS</a></li>
+                    <li class="nav-item"><a href="#nav-movimentacao-pagamento" class="nav-link" data-toggle="tab" aria-expanded="false">REALIZAR PAGAMENTOS</a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content br-n pn">
+                    <div id="nav-movimentacao" class="tab-pane active">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="fichaRecebimento">
+                                    <vc:movimentacao-recebimento-ficha max-priority="3" is-done="false">
+                                    </vc:movimentacao-recebimento-ficha>
+                                </div>
+                                <div id="fichaPagamento">
+                                    <vc:movimentacao-pagamento-ficha max-priority="3" is-done="false">
+                                    </vc:movimentacao-pagamento-ficha>
+                                </div>
+                                <div id="fichaTransferencia">
+                                    <vc:movimentacao-transferencia-ficha max-priority="3" is-done="false">
+                                    </vc:movimentacao-transferencia-ficha>
+                                </div>
+                                <div id="resumoMovimentao">
+                                    <vc:movimentacao-resumo max-priority="3" is-done="false">
+                                    </vc:movimentacao-resumo>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nav-movimentacao-recebimento" class="tab-pane">
+                        <div id="realizarrecebimento">
+                            <vc:movimentacao-recebimento-lista max-priority="3" is-done="false">
+                            </vc:movimentacao-recebimento-lista>
+                        </div>
+                    </div>
+                    <div id="nav-movimentacao-pagamento" class="tab-pane">
+                        <vc:movimentacao-pagamento-lista max-priority="3" is-done="false">
+                        </vc:movimentacao-pagamento-lista>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+

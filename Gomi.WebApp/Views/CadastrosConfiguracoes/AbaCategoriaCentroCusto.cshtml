@@ -1,0 +1,44 @@
+﻿<div class="row">
+    <div class="col-12">
+        <div class="card sub-menu">
+            <div class="card-header">
+                <ul class="nav nav-pills">
+                    <li class="nav-item"><a href="#nav-categoriacentrocusto-categoria" class="nav-link" data-toggle="tab" aria-expanded="false">CATEGORIAS</a></li>
+                    <li class="nav-item"><a href="#nav-categoriacentrocusto-centrocusto" class="nav-link" data-toggle="tab" aria-expanded="false">CENTRO DE CUSTOS</a></li>
+                </ul>
+            </div>
+            <div class="card-body">
+                <div class="tab-content br-n pn">
+                    <div id="nav-categoriacentrocusto-categoria" class="tab-pane active">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="listaPlanoContas">
+                                    <vc:cadastro-configuracao-plano-conta-lista max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-plano-conta-lista>
+                                </div>
+                                <div id="fichaPlanoConta">
+                                    <vc:cadastro-configuracao-plano-conta-ficha max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-plano-conta-ficha>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="nav-categoriacentrocusto-centrocusto" class="tab-pane">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div id="listaCentroCustos">
+                                    <vc:cadastro-configuracao-centro-custo-lista max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-centro-custo-lista>
+                                </div>
+                                <div id="fichaCentroCusto">
+                                    <vc:cadastro-configuracao-centro-custo-ficha max-priority="3" is-done="false">
+                                    </vc:cadastro-configuracao-centro-custo-ficha>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
